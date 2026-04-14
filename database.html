@@ -95,33 +95,38 @@
         <p class="alert-text">PLEASE STAY ALERT.</p>
     </div>
 
-    <script>
-        const grid = document.getElementById('grid');
-        
-        // Names for the 9 locked folders to make them look real
-        const lockedNames = ["SIGNAL_LOGS", "BIO_SCAN_01", "THERMAL_IMG", "ENCRYPTED_04", "VOID_DATA", "SECTOR_7_MAP", "AUDIO_RECOVER", "DRONE_FEED", "ARCHIVE_X"];
+ <script>
+    const grid = document.getElementById('grid');
+    
+    // Path to your uploaded image
+    const folderImg = "folder.png";
 
-        for (let i = 0; i < 9; i++) {
-            let div = document.createElement('div');
-            div.className = 'folder';
-            div.innerHTML = `<div class="folder-icon">📁</div><div>${lockedNames[i]}</div>`;
-            div.onclick = () => alert("CRITICAL ERROR: ACCESS DENIED\nLEVEL 5 CLEARANCE REQUIRED");
-            grid.appendChild(div);
-        }
+    // Names for the 9 locked folders
+    const lockedNames = ["SIGNAL_LOGS", "BIO_SCAN_01", "THERMAL_IMG", "ENCRYPTED_04", "VOID_DATA", "SECTOR_7_MAP", "AUDIO_RECOVER", "DRONE_FEED", "ARCHIVE_X"];
 
-        // The 10th Folder (The Openable One)
-        let openFolder = document.createElement('div');
-        openFolder.className = 'folder';
-        openFolder.innerHTML = `<div class="folder-icon" style="color: #00ff00;">📂</div><div>ENTITY_REPORT</div>`;
-        openFolder.onclick = () => {
-            document.getElementById('file-content').style.display = 'block';
-        };
-        grid.appendChild(openFolder);
+    for (let i = 0; i < 9; i++) {
+        let div = document.createElement('div');
+        div.className = 'folder';
+        // Using your folder.png here
+        div.innerHTML = `<img src="${folderImg}" style="width: 60px; height: auto; margin-bottom: 10px;"><div>${lockedNames[i]}</div>`;
+        div.onclick = () => alert("CRITICAL ERROR: ACCESS DENIED\nLEVEL 5 CLEARANCE REQUIRED");
+        grid.appendChild(div);
+    }
 
-        function closeFile() {
-            document.getElementById('file-content').style.display = 'none';
-        }
-    </script>
+    // The 10th Folder (The Openable One)
+    let openFolder = document.createElement('div');
+    openFolder.className = 'folder';
+    // Using your folder.png here too
+    openFolder.innerHTML = `<img src="${folderImg}" style="width: 60px; height: auto; margin-bottom: 10px; filter: sepia(1) saturate(5) hue-rotate(90deg);"><div>ENTITY_REPORT</div>`;
+    openFolder.onclick = () => {
+        document.getElementById('file-content').style.display = 'block';
+    };
+    grid.appendChild(openFolder);
+
+    function closeFile() {
+        document.getElementById('file-content').style.display = 'none';
+    }
+</script>
 
 </body>
 </html>
