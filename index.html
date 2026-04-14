@@ -31,15 +31,36 @@
         }
 
         .logo-img {
-            width: 200px;
+            width: 220px;
             height: auto;
-            filter: drop-shadow(0 0 10px #00ff00);
+            filter: drop-shadow(0 0 15px #00ff00);
             animation: pulse 2s infinite;
+            margin-bottom: 20px;
+        }
+
+        .loader-container {
+            width: 300px;
+            border: 1px solid #00ff00;
+            padding: 3px;
+            margin-top: 20px;
+        }
+
+        .loader-bar {
+            height: 15px;
+            background: #00ff00;
+            width: 0%; 
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        #status-text {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
         }
 
         /* SECURITY BOX */
         #home-page {
-            display: none; /* Hidden until loader finishes */
+            display: none;
             text-align: center;
             border: 1px solid #00ff00;
             padding: 40px;
@@ -53,7 +74,7 @@
             padding: 10px;
             font-family: monospace;
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             outline: none;
         }
 
@@ -67,11 +88,9 @@
             font-family: monospace;
         }
 
-        button:hover { background: #008800; }
-
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.02); }
         }
     </style>
 </head>
@@ -79,51 +98,64 @@
 
     <div id="loading-screen">
         <img src="Atrails anomalies.png" alt="Logo" class="logo-img">
-        <p>INITIALIZING SECURITY PROTOCOLS...</p>
+        <div id="status-text">INITIALIZING SYSTEM...</div>
+        <div class="loader-container">
+            <div id="progress" class="loader-bar"></div>
+        </div>
     </div>
 
     <div id="home-page">
         <h1 style="text-shadow: 0 0 10px #00ff00;">RESTRICTED ACCESS</h1>
         <p>ENTER ENCRYPTION KEY:</p>
-        
         <input type="password" id="passkey-input" placeholder="********"><br>
         <button onclick="checkPasskey()">VERIFY IDENTITY</button>
-
         <p id="message" style="color: #ff0000; margin-top: 15px; font-weight: bold;"></p>
         <p id="counter" style="color: #00ff00; font-size: 0.8rem;"></p>
     </div>
 
     <script>
-        // Switch from loader to login after 3 seconds
-        setTimeout(() => {
-            document.getElementById('loading-screen').style.display = 'none';
-            document.getElementById('home-page').style.display = 'block';
-        }, 3000);
+        const LOCKOUT_TIME = 1 * 60 * 1000; // 1 hour
+        const totalTime = 10000; // 10 seconds loading
+        
+        // Check for lockout first
+        const lockoutExpiry = localStorage.getItem('lockout_expiry');
+        if (lockoutExpiry && Date.now() < lockoutExpiry) {
+            startLockoutTimer(lockoutExpiry);
+        } else {
+            runLoadingSequence();
+        }
+
+        function runLoadingSequence() {
+            const bar = document.getElementById('progress');
+            const status = document.getElementById('status-text');
+            const phrases = ["ESTABLISHING UPLINK...", "DECRYPTING LAYERS...", "BYPASSING FIREWALLS...", "FINALIZING..."];
+            let startTime = Date.now();
+
+            const updateLoader = setInterval(() => {
+                let elapsed = Date.now() - startTime;
+                let percentage = (elapsed / totalTime) * 100;
+
+                if (percentage >= 100) {
+                    clearInterval(updateLoader);
+                    bar.style.width = "100%";
+                    document.getElementById('loading-screen').style.display = 'none';
+                    document.getElementById('home-page').style.display = 'block';
+                } else {
+                    bar.style.width = percentage + "%";
+                    if (percentage > 25) status.innerText = phrases[1];
+                    if (percentage > 50) status.innerText = phrases[2];
+                    if (percentage > 75) status.innerText = phrases[3];
+                }
+            }, 50);
+        }
 
         let attempts = 0;
-        const maxAttempts = 5;
-
         function checkPasskey() {
             const val = document.getElementById('passkey-input').value;
-            const msg = document.getElementById('message');
-            const count = document.getElementById('counter');
-
             if (val === "Triangle") {
                 window.location.href = "database.html"; 
             } else {
                 attempts++;
-                msg.innerText = "ACCESS DENIED";
-                
-                if (attempts >= 2) {
-                    let left = maxAttempts - attempts;
-                    count.innerText = left + " TRIES REMAINING";
-                }
-
-                if (attempts >= maxAttempts) {
-                    document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:20%;'>SYSTEM LOCKED: UNAUTHORIZED USER</h1>";
-                }
-            }
-        }
-    </script>
-</body>
-</html>
+                document.getElementById('message').innerText = "ACCESS DENIED";
+                let left = 5 - attempts;
+                document.getElementById
