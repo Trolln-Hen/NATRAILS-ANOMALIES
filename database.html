@@ -1,20 +1,127 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NATRAILS | DATABASE</title>
     <style>
-        body { background: #0a0a0a; color: #00ff00; font-family: monospace; padding: 50px; }
-        .data-box { border: 1px dashed #00ff00; padding: 20px; }
+        body {
+            background-color: #050505;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 40px;
+            margin: 0;
+        }
+
+        .header {
+            border-bottom: 2px solid #00ff00;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        /* Grid for Folders */
+        .folder-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .folder {
+            text-align: center;
+            cursor: pointer;
+            padding: 15px;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .folder:hover {
+            border: 1px solid #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .folder-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        /* Modal / Pop-up for the Entity File */
+        #file-content {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #000;
+            border: 2px solid #00ff00;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
+            z-index: 100;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .close-btn {
+            color: #ff0000;
+            float: right;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .alert-text {
+            color: #ff0000;
+            font-weight: bold;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
-    <div class="data-box">
-        <h1>[ CLASSIFIED DATABASE ]</h1>
-        <p>> Connection established...</p>
-        <p>> Loading anomaly logs...</p>
-        <ul>
-            <li>Anomaly #001: Detected in Sector 7</li>
-            <li>Anomaly #002: Signal mismatch in High-Alt</li>
-        </ul>
+
+    <div class="header">
+        <h1>DIRECTORY: /ROOT/ANOMALIES/SECTOR_09</h1>
+        <p>CAUTION: Viewing unauthorized files is a punishable offense.</p>
     </div>
+
+    <div class="folder-grid" id="grid">
+        </div>
+
+    <div id="file-content">
+        <span class="close-btn" onclick="closeFile()">[X] CLOSE_FILE</span>
+        <h2 style="color: #00ff00;">FILE: ENTITY 180102020904</h2>
+        <hr style="border-color: #00ff00;">
+        <p><strong>STATUS:</strong> <span style="color: #ff0000;">MISSING</span></p>
+        <p><strong>FOOTAGE:</strong> NOT AVAILABLE</p>
+        <br>
+        <p class="alert-text">PLEASE STAY ALERT.</p>
+    </div>
+
+    <script>
+        const grid = document.getElementById('grid');
+        
+        // Names for the 9 locked folders to make them look real
+        const lockedNames = ["SIGNAL_LOGS", "BIO_SCAN_01", "THERMAL_IMG", "ENCRYPTED_04", "VOID_DATA", "SECTOR_7_MAP", "AUDIO_RECOVER", "DRONE_FEED", "ARCHIVE_X"];
+
+        for (let i = 0; i < 9; i++) {
+            let div = document.createElement('div');
+            div.className = 'folder';
+            div.innerHTML = `<div class="folder-icon">📁</div><div>${lockedNames[i]}</div>`;
+            div.onclick = () => alert("CRITICAL ERROR: ACCESS DENIED\nLEVEL 5 CLEARANCE REQUIRED");
+            grid.appendChild(div);
+        }
+
+        // The 10th Folder (The Openable One)
+        let openFolder = document.createElement('div');
+        openFolder.className = 'folder';
+        openFolder.innerHTML = `<div class="folder-icon" style="color: #00ff00;">📂</div><div>ENTITY_REPORT</div>`;
+        openFolder.onclick = () => {
+            document.getElementById('file-content').style.display = 'block';
+        };
+        grid.appendChild(openFolder);
+
+        function closeFile() {
+            document.getElementById('file-content').style.display = 'none';
+        }
+    </script>
+
 </body>
 </html>
