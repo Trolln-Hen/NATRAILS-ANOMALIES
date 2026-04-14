@@ -10,6 +10,10 @@
             color: #00ff00;
             font-family: 'Courier New', Courier, monospace;
             margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             overflow: hidden;
         }
 
@@ -26,47 +30,48 @@
             z-index: 9999;
         }
 
-        /* CSS for your Logo Image */
         .logo-img {
-            width: 200px; /* Adjust size here */
+            width: 200px;
             height: auto;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 10px #00ff00); /* Gives your logo a neon glow */
+            filter: drop-shadow(0 0 10px #00ff00);
             animation: pulse 2s infinite;
         }
 
-        .loader-bar {
-            width: 250px;
-            height: 4px;
-            background: #111;
-            border: 1px solid #00ff00;
-            position: relative;
-            margin-top: 20px;
-        }
-
-        .loader-progress {
-            position: absolute;
-            height: 100%;
-            background: #00ff00;
-            width: 0%;
-            animation: fill 3s forwards;
-        }
-
-        /* HOME PAGE */
+        /* SECURITY BOX */
         #home-page {
-            display: none;
-            padding: 50px;
+            display: none; /* Hidden until loader finishes */
             text-align: center;
+            border: 1px solid #00ff00;
+            padding: 40px;
+            box-shadow: 0 0 20px #004400;
         }
+
+        input {
+            background: #000;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 10px;
+            font-family: monospace;
+            text-align: center;
+            margin-bottom: 10px;
+            outline: none;
+        }
+
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        button:hover { background: #008800; }
 
         @keyframes pulse {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.05); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-        @keyframes fill {
-            0% { width: 0%; }
-            100% { width: 100%; }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
     </style>
 </head>
@@ -74,74 +79,48 @@
 
     <div id="loading-screen">
         <img src="Atrails anomalies.png" alt="Logo" class="logo-img">
-        <div style="letter-spacing: 5px;">INITIALIZING SYSTEM...</div>
-        <div class="loader-bar">
-            <div class="loader-progress"></div>
-        </div>
+        <p>INITIALIZING SECURITY PROTOCOLS...</p>
     </div>
 
     <div id="home-page">
-        <h1 style="text-shadow: 0 0 15px #00ff00;">ACCESS GRANTED</h1>
-        <p>Welcome to the NATRAILS ANOMALIES database.</p>
-        <hr style="border-color: #00ff00; width: 50%;">
-        <p>Current Sector: [CLASSIFIED]</p>
-        <p style="font-size: 0.8rem; color: #008800;">Waiting for uplink...</p>
+        <h1 style="text-shadow: 0 0 10px #00ff00;">RESTRICTED ACCESS</h1>
+        <p>ENTER ENCRYPTION KEY:</p>
+        
+        <input type="password" id="passkey-input" placeholder="********"><br>
+        <button onclick="checkPasskey()">VERIFY IDENTITY</button>
+
+        <p id="message" style="color: #ff0000; margin-top: 15px; font-weight: bold;"></p>
+        <p id="counter" style="color: #00ff00; font-size: 0.8rem;"></p>
     </div>
 
     <script>
-        setTimeout(() => {
-            document.getElementById('loading-screen').style.fadeOut = "slow"; // Visual hint
-            document.getElementById('loading-screen').style.display = 'none';
-            document.getElementById('home-page').style.display = 'block';
-            document.body.style.overflow = 'auto';
-        }, 3500);
-    </script>
-<div id="home-page">
-        <h1 style="text-shadow: 0 0 15px #00ff00;">SECURITY CHECK</h1>
-        <p>SYSTEM ENCRYPTED. PLEASE ENTER PASSKEY:</p>
-        
-        <input type="password" id="passkey-input" placeholder="Enter Key..." 
-               style="background: black; color: #00ff00; border: 1px solid #00ff00; padding: 10px; font-family: monospace;">
-        
-        <button onclick="checkPasskey()" 
-                style="background: #00ff00; color: black; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold;">
-            VERIFY
-        </button>
-
-        <p id="message" style="margin-top: 20px; color: #ff0000;"></p>
-        <p id="counter" style="font-size: 0.8rem; color: #008800; margin-top: 10px;"></p>
-    </div>
-
-    <script>
-        // Loading Screen Logic
+        // Switch from loader to login after 3 seconds
         setTimeout(() => {
             document.getElementById('loading-screen').style.display = 'none';
             document.getElementById('home-page').style.display = 'block';
-        }, 3500);
+        }, 3000);
 
-        // Security Logic
         let attempts = 0;
-        const maxAttempts = 5; // 2 initial + 3 limit counter
+        const maxAttempts = 5;
 
         function checkPasskey() {
-            const input = document.getElementById('passkey-input').value;
+            const val = document.getElementById('passkey-input').value;
             const msg = document.getElementById('message');
-            const countDisplay = document.getElementById('counter');
+            const count = document.getElementById('counter');
 
-            if (input === "Triangle") {
-                window.location.href = "database.html"; // Redirects to your next file
+            if (val === "Triangle") {
+                window.location.href = "database.html"; 
             } else {
                 attempts++;
-                msg.innerText = "INCORRECT PASSKEY";
+                msg.innerText = "ACCESS DENIED";
                 
-                if (attempts >= 2 && attempts < maxAttempts) {
-                    let remaining = maxAttempts - attempts;
-                    countDisplay.innerText = "SECURITY ALERT: " + remaining + " TRIES REMAINING BEFORE LOCKOUT.";
+                if (attempts >= 2) {
+                    let left = maxAttempts - attempts;
+                    count.innerText = left + " TRIES REMAINING";
                 }
 
                 if (attempts >= maxAttempts) {
-                    // Redirect to a blocked page or a YouTube "Access Denied" video
-                    window.location.href = "https://www.google.com/search?q=access+denied"; 
+                    document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:20%;'>SYSTEM LOCKED: UNAUTHORIZED USER</h1>";
                 }
             }
         }
