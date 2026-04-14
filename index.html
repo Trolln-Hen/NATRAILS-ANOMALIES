@@ -96,6 +96,55 @@
             document.body.style.overflow = 'auto';
         }, 3500);
     </script>
+<div id="home-page">
+        <h1 style="text-shadow: 0 0 15px #00ff00;">SECURITY CHECK</h1>
+        <p>SYSTEM ENCRYPTED. PLEASE ENTER PASSKEY:</p>
+        
+        <input type="password" id="passkey-input" placeholder="Enter Key..." 
+               style="background: black; color: #00ff00; border: 1px solid #00ff00; padding: 10px; font-family: monospace;">
+        
+        <button onclick="checkPasskey()" 
+                style="background: #00ff00; color: black; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold;">
+            VERIFY
+        </button>
 
+        <p id="message" style="margin-top: 20px; color: #ff0000;"></p>
+        <p id="counter" style="font-size: 0.8rem; color: #008800; margin-top: 10px;"></p>
+    </div>
+
+    <script>
+        // Loading Screen Logic
+        setTimeout(() => {
+            document.getElementById('loading-screen').style.display = 'none';
+            document.getElementById('home-page').style.display = 'block';
+        }, 3500);
+
+        // Security Logic
+        let attempts = 0;
+        const maxAttempts = 5; // 2 initial + 3 limit counter
+
+        function checkPasskey() {
+            const input = document.getElementById('passkey-input').value;
+            const msg = document.getElementById('message');
+            const countDisplay = document.getElementById('counter');
+
+            if (input === "Triangle") {
+                window.location.href = "database.html"; // Redirects to your next file
+            } else {
+                attempts++;
+                msg.innerText = "INCORRECT PASSKEY";
+                
+                if (attempts >= 2 && attempts < maxAttempts) {
+                    let remaining = maxAttempts - attempts;
+                    countDisplay.innerText = "SECURITY ALERT: " + remaining + " TRIES REMAINING BEFORE LOCKOUT.";
+                }
+
+                if (attempts >= maxAttempts) {
+                    // Redirect to a blocked page or a YouTube "Access Denied" video
+                    window.location.href = "https://www.google.com/search?q=access+denied"; 
+                }
+            }
+        }
+    </script>
 </body>
 </html>
