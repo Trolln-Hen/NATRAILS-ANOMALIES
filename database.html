@@ -5,128 +5,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NATRAILS | DATABASE</title>
     <style>
-        body {
-            background-color: #050505;
-            color: #00ff00;
-            font-family: 'Courier New', Courier, monospace;
-            padding: 40px;
-            margin: 0;
-        }
-
-        .header {
-            border-bottom: 2px solid #00ff00;
-            margin-bottom: 30px;
-            padding-bottom: 10px;
-            text-shadow: 0 0 10px #00ff00;
-        }
-
+        body { background-color: #050505; color: #00ff00; font-family: 'Courier New', Courier, monospace; padding: 40px; margin: 0; }
+        .header { border-bottom: 2px solid #00ff00; margin-bottom: 30px; padding-bottom: 10px; text-shadow: 0 0 10px #00ff00; }
+        
         /* Grid for Folders */
-        .folder-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 20px;
+        .folder-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
+        .folder { text-align: center; cursor: pointer; padding: 15px; border: 1px solid transparent; transition: all 0.3s; }
+        .folder:hover { border: 1px solid #00ff00; background: rgba(0, 255, 0, 0.1); }
+        
+        /* Loading Screen Overlay */
+        #loading-screen {
+            display: none; 
+            position: fixed; 
+            top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: black; 
+            z-index: 2000; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center;
         }
-
-        .folder {
-            text-align: center;
-            cursor: pointer;
-            padding: 15px;
-            border: 1px solid transparent;
-            transition: all 0.3s;
-        }
-
-        .folder:hover {
-            border: 1px solid #00ff00;
-            background: rgba(0, 255, 0, 0.1);
-        }
-
-        .folder-icon {
-            font-size: 50px;
-            margin-bottom: 10px;
-        }
-
-        /* Modal / Pop-up for the Entity File */
-        #file-content {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #000;
-            border: 2px solid #00ff00;
-            padding: 30px;
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.5);
-            z-index: 100;
-            width: 80%;
-            max-width: 500px;
-        }
-
-        .close-btn {
-            color: #ff0000;
-            float: right;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .alert-text {
-            color: #ff0000;
-            font-weight: bold;
-            text-decoration: underline;
-        }
+        .progress-container { width: 300px; border: 1px solid #00ff00; height: 20px; margin-top: 20px; }
+        .progress-fill { width: 0%; height: 100%; background: #00ff00; transition: width 0.2s; }
     </style>
 </head>
 <body>
+
+    <div id="loading-screen">
+        <h1 style="text-shadow: 0 0 10px #00ff00;">DECRYPTING FILE: ENTITY-03181523...</h1>
+        <div class="progress-container">
+            <div id="progress-fill" class="progress-fill"></div>
+        </div>
+        <p id="status-text">Bypassing security protocols...</p>
+    </div>
 
     <div class="header">
         <h1>DIRECTORY: /ROOT/ANOMALIES/SECTOR_09</h1>
         <p>CAUTION: Viewing unauthorized files is a punishable offense.</p>
     </div>
 
-    <div class="folder-grid" id="grid">
-        </div>
+    <div class="folder-grid" id="grid"></div>
 
-    <div id="file-content">
-        <span class="close-btn" onclick="closeFile()">[X] CLOSE_FILE</span>
-        <h2 style="color: #00ff00;">FILE: ENTITY 180102020904</h2>
-        <hr style="border-color: #00ff00;">
-        <p><strong>STATUS:</strong> <span style="color: #ff0000;">MISSING</span></p>
-        <p><strong>FOOTAGE:</strong> NOT AVAILABLE</p>
-        <br>
-        <p class="alert-text">PLEASE STAY ALERT.</p>
-    </div>
+    <script>
+        const grid = document.getElementById('grid');
+        const folderImg = "folder.png"; 
+        const lockedNames = ["SIGNAL_LOGS", "BIO_SCAN_01", "THERMAL_IMG", "ENCRYPTED_04", "VOID_DATA", "SECTOR_7_MAP", "AUDIO_RECOVER", "DRONE_FEED", "ARCHIVE_X"];
 
- <script>
-    const grid = document.getElementById('grid');
-    
-    // Path to your uploaded image
-    const folderImg = "folder.png";
+        // Generate locked folders
+        for (let i = 0; i < 9; i++) {
+            let div = document.createElement('div');
+            div.className = 'folder';
+            div.innerHTML = `<img src="${folderImg}" style="width: 60px; height: auto; margin-bottom: 10px;"><div>${lockedNames[i]}</div>`;
+            div.onclick = () => alert("CRITICAL ERROR: ACCESS DENIED\nLEVEL 5 CLEARANCE REQUIRED");
+            grid.appendChild(div);
+        }
 
-    // Names for the 9 locked folders
-    const lockedNames = ["SIGNAL_LOGS", "BIO_SCAN_01", "THERMAL_IMG", "ENCRYPTED_04", "VOID_DATA", "SECTOR_7_MAP", "AUDIO_RECOVER", "DRONE_FEED", "ARCHIVE_X"];
+        // The ENTITY-03181523 Folder
+        let openFolder = document.createElement('div');
+        openFolder.className = 'folder';
+        openFolder.innerHTML = `<img src="${folderImg}" style="width: 60px; height: auto; margin-bottom: 10px; filter: sepia(1) saturate(5) hue-rotate(90deg);"><div>ENTITY-03181523</div>`;
+        
+        openFolder.onclick = () => {
+            let password = prompt("CRITICAL ACCESS REQUIRED\nENTER SECURITY PASSCODE:");
+            
+            if (password === "Sky") {
+                startLoading();
+            } else {
+                alert("TERMINAL ERROR: INCORRECT PASSCODE. ACCESS DENIED.");
+            }
+        };
 
-    for (let i = 0; i < 9; i++) {
-        let div = document.createElement('div');
-        div.className = 'folder';
-        // Using your folder.png here
-        div.innerHTML = `<img src="${folderImg}" style="width: 60px; height: auto; margin-bottom: 10px;"><div>${lockedNames[i]}</div>`;
-        div.onclick = () => alert("CRITICAL ERROR: ACCESS DENIED\nLEVEL 5 CLEARANCE REQUIRED");
-        grid.appendChild(div);
-    }
+        grid.appendChild(openFolder);
 
-    // The 10th Folder (The Openable One)
-    let openFolder = document.createElement('div');
-    openFolder.className = 'folder';
-    // Using your folder.png here too
-    openFolder.innerHTML = `<img src="${folderImg}" style="width: 60px; height: auto; margin-bottom: 10px; filter: sepia(1) saturate(5) hue-rotate(90deg);"><div>ENTITY_REPORT</div>`;
-    openFolder.onclick = () => {
-        document.getElementById('file-content').style.display = 'block';
-    };
-    grid.appendChild(openFolder);
+        function startLoading() {
+            const screen = document.getElementById('loading-screen');
+            const fill = document.getElementById('progress-fill');
+            const status = document.getElementById('status-text');
+            screen.style.display = 'flex';
 
-    function closeFile() {
-        document.getElementById('file-content').style.display = 'none';
-    }
-</script>
-
+            let width = 0;
+            let messages = ["Retrieving data shards...", "Reconstructing visual feed...", "Finalizing connection..."];
+            
+            let interval = setInterval(() => {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    // Redirect to the actual file
+                    window.location.href = "ENTITY-03181523.html";
+                } else {
+                    width += Math.random() * 15;
+                    if (width > 100) width = 100;
+                    fill.style.width = width + "%";
+                    
+                    if (width > 30) status.innerText = messages[0];
+                    if (width > 60) status.innerText = messages[1];
+                    if (width > 85) status.innerText = messages[2];
+                }
+            }, 300);
+        }
+    </script>
 </body>
 </html>
