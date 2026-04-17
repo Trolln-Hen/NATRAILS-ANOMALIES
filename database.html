@@ -8,22 +8,19 @@
         body { background-color: #050505; color: #00ff00; font-family: 'Courier New', Courier, monospace; padding: 40px; margin: 0; }
         .header { border-bottom: 2px solid #00ff00; margin-bottom: 30px; padding-bottom: 10px; text-shadow: 0 0 10px #00ff00; }
         
-        /* Grid for Folders */
         .folder-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
         .folder { text-align: center; cursor: pointer; padding: 15px; border: 1px solid transparent; transition: all 0.3s; }
         .folder:hover { border: 1px solid #00ff00; background: rgba(0, 255, 0, 0.1); }
-        
-        /* Loading Screen Overlay */
+        .folder img { width: 60px; height: auto; margin-bottom: 10px; transition: filter 0.3s; }
+
+        /* FOLDER STATES */
+        .blue img { filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(190deg) brightness(118%) contrast(119%); } /* Default Blue */
+        .grey img { filter: grayscale(100%) opacity(0.5); } /* Seen */
+        .green img { filter: sepia(1) saturate(5) hue-rotate(90deg); } /* Completed */
+
         #loading-screen {
-            display: none; 
-            position: fixed; 
-            top: 0; left: 0; 
-            width: 100%; height: 100%; 
-            background: black; 
-            z-index: 2000; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: black; z-index: 2000; flex-direction: column; justify-content: center; align-items: center;
         }
         .progress-container { width: 300px; border: 1px solid #00ff00; height: 20px; margin-top: 20px; }
         .progress-fill { width: 0%; height: 100%; background: #00ff00; transition: width 0.2s; }
@@ -32,7 +29,7 @@
 <body>
 
     <div id="loading-screen">
-        <h1 style="text-shadow: 0 0 10px #00ff00;">DECRYPTING FILE: ENTITY-03181523...</h1>
+        <h1 id="loading-title" style="text-shadow: 0 0 10px #00ff00;">DECRYPTING...</h1>
         <div class="progress-container">
             <div id="progress-fill" class="progress-fill"></div>
         </div>
@@ -48,59 +45,78 @@
 
     <script>
         const grid = document.getElementById('grid');
-        const folderImg = "folder.png"; 
-        const lockedNames = ["SIGNAL_LOGS", "BIO_SCAN_01", "THERMAL_IMG", "ENCRYPTED_04", "VOID_DATA", "SECTOR_7_MAP", "AUDIO_RECOVER", "DRONE_FEED", "ARCHIVE_X"];
+        const folderImg = "folder.png";
+        
+        // Configuration for Folders
+        const folders = [
+            { id: "03181523", name: "ENTITY-03181523", url: "ENTITY-03181523.html", passcode: "Sky" },
+            { id: "180102020904", name: "ENTITY-180102020904", url: "Entity-180102020904.html", passcode: "Void" }, // New Entity
+            { id: "fake1", name: "SIGNAL_LOGS" },
+            { id: "fake2", name: "BIO_SCAN_01" },
+            { id: "fake3", name: "THERMAL_IMG" },
+            { id: "fake4", name: "ENCRYPTED_04" },
+            { id: "fake5", name: "VOID_DATA" },
+            { id: "fake6", name: "SECTOR_7_MAP" },
+            { id: "fake7", name: "AUDIO_RECOVER" },
+            { id: "fake8", name: "DRONE_FEED" }
+        ];
 
-        // Generate locked folders
-        for (let i = 0; i < 9; i++) {
+        folders.forEach(f => {
             let div = document.createElement('div');
             div.className = 'folder';
-            div.innerHTML = `<img src="${folderImg}" style="width: 60px; height: auto; margin-bottom: 10px;"><div>${lockedNames[i]}</div>`;
-            div.onclick = () => alert("CRITICAL ERROR: ACCESS DENIED\nLEVEL 5 CLEARANCE REQUIRED");
-            grid.appendChild(div);
-        }
-
-        // The ENTITY-03181523 Folder
-        let openFolder = document.createElement('div');
-        openFolder.className = 'folder';
-        openFolder.innerHTML = `<img src="${folderImg}" style="width: 60px; height: auto; margin-bottom: 10px; filter: sepia(1) saturate(5) hue-rotate(90deg);"><div>ENTITY-03181523</div>`;
-        
-        openFolder.onclick = () => {
-            let password = prompt("CRITICAL ACCESS REQUIRED\nENTER SECURITY PASSCODE:");
             
-            if (password === "Sky") {
-                startLoading();
-            } else {
-                alert("TERMINAL ERROR: INCORRECT PASSCODE. ACCESS DENIED.");
-            }
-        };
+            // Determine state based on localStorage
+            const isCompleted = localStorage.getItem(`completed_${f.id}`);
+            const isSeen = localStorage.getItem(`seen_${f.id}`);
 
-        grid.appendChild(openFolder);
+            if (isCompleted) div.classList.add('green');
+            else if (isSeen) div.classList.add('grey');
+            else div.classList.add('blue');
 
-        function startLoading() {
+            div.innerHTML = `<img src="${folderImg}"><div>${f.name}</div>`;
+            
+            div.onclick = () => {
+                // Mark as seen
+                if (!isCompleted) {
+                    localStorage.setItem(`seen_${f.id}`, "true");
+                    div.classList.remove('blue');
+                    div.classList.add('grey');
+                }
+
+                if (f.url) {
+                    let pass = prompt(`ACCESS REQUESTED FOR ${f.name}\nENTER PASSCODE:`);
+                    if (pass === f.passcode) {
+                        // Mark as completed since they got the code right
+                        localStorage.setItem(`completed_${f.id}`, "true");
+                        startLoading(f.name, f.url);
+                    } else {
+                        alert("ACCESS DENIED: INCORRECT PASSCODE.");
+                    }
+                } else {
+                    alert("CRITICAL ERROR: FILE CORRUPTED OR EMPTY.");
+                }
+            };
+            grid.appendChild(div);
+        });
+
+        function startLoading(name, url) {
             const screen = document.getElementById('loading-screen');
             const fill = document.getElementById('progress-fill');
             const status = document.getElementById('status-text');
+            document.getElementById('loading-title').innerText = `DECRYPTING ${name}...`;
             screen.style.display = 'flex';
 
             let width = 0;
-            let messages = ["Retrieving data shards...", "Reconstructing visual feed...", "Finalizing connection..."];
-            
             let interval = setInterval(() => {
                 if (width >= 100) {
                     clearInterval(interval);
-                    // Redirect to the actual file
-                    window.location.href = "ENTITY-03181523.html";
+                    window.location.href = url;
                 } else {
-                    width += Math.random() * 15;
+                    width += Math.random() * 20;
                     if (width > 100) width = 100;
                     fill.style.width = width + "%";
-                    
-                    if (width > 30) status.innerText = messages[0];
-                    if (width > 60) status.innerText = messages[1];
-                    if (width > 85) status.innerText = messages[2];
                 }
-            }, 300);
+            }, 200);
         }
     </script>
 </body>
