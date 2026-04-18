@@ -5,96 +5,155 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NATRAILS | DATABASE</title>
     <style>
-        body { background-color: #050505; color: #00ff00; font-family: 'Courier New', Courier, monospace; padding: 40px; margin: 0; }
-        .header { border-bottom: 2px solid #00ff00; margin-bottom: 30px; padding-bottom: 10px; text-shadow: 0 0 10px #00ff00; }
-        
-        .folder-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
-        .folder { text-align: center; cursor: pointer; padding: 15px; border: 1px solid transparent; transition: all 0.3s; }
-        .folder:hover { border: 1px solid #00ff00; background: rgba(0, 255, 0, 0.1); }
-        .folder img { width: 60px; height: auto; margin-bottom: 10px; transition: filter 0.3s; }
+        :root {
+            --neon: #00ff00;
+            --bg: #020202;
+            --translucent: rgba(0, 255, 0, 0.03);
+            --panel-border: rgba(0, 255, 0, 0.15);
+        }
 
-        /* FOLDER STATES */
-        .blue img { filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(190deg) brightness(118%) contrast(119%); } /* Default Blue */
-        .grey img { filter: grayscale(100%) opacity(0.5); } /* Seen */
-        .green img { filter: sepia(1) saturate(5) hue-rotate(90deg); } /* Completed */
+        body {
+            background-color: var(--bg);
+            background: radial-gradient(circle at center, #080808 0%, #000 100%);
+            color: var(--neon);
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0; padding: 40px;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh; overflow-x: hidden;
+        }
+
+        /* --- BRANDING --- */
+        .branding {
+            position: absolute; top: 30px; right: 40px;
+            display: flex; align-items: center; gap: 15px;
+        }
+        .branding img {
+            width: 40px; filter: brightness(0) invert(1) drop-shadow(0 0 8px var(--neon));
+        }
+        .branding-text { text-align: right; line-height: 1; }
+        .branding-text h2 { margin: 0; font-size: 14px; letter-spacing: 2px; }
+
+        /* --- HEADER --- */
+        .header-section {
+            width: 100%; max-width: 1000px;
+            border-bottom: 1px solid var(--panel-border);
+            margin-bottom: 40px; padding-bottom: 20px;
+        }
+        .header-section h1 { font-size: 32px; letter-spacing: 8px; margin: 0; }
+        .description { font-size: 11px; opacity: 0.5; margin-top: 10px; }
+
+        /* --- FOLDER GRID --- */
+        .database-container {
+            width: 100%; max-width: 1000px;
+            background: var(--translucent);
+            border: 1px solid var(--panel-border);
+            backdrop-filter: blur(15px);
+            padding: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 25px;
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 1);
+        }
+
+        .file-item {
+            display: flex; flex-direction: column; align-items: center;
+            cursor: pointer; transition: 0.3s; padding: 15px;
+        }
+
+        .file-item:hover { background: rgba(0, 255, 0, 0.05); }
+
+        /* --- DARKER NAVY FOLDERS --- */
+        .file-icon {
+            width: 65px; margin-bottom: 10px;
+            /* Deep Navy Filter */
+            filter: sepia(1) hue-rotate(190deg) saturate(3) brightness(0.3);
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Opened Folder Logic */
+        .file-item.opened .file-icon {
+            filter: drop-shadow(0 0 12px var(--neon)) brightness(1.2);
+        }
+
+        .file-name {
+            font-size: 10px; text-align: center; letter-spacing: 1px;
+            animation: textFlicker 3s infinite;
+        }
+
+        @keyframes textFlicker {
+            0%, 90%, 100% { opacity: 1; }
+            92% { opacity: 0.5; }
+            94% { opacity: 0.8; }
+            96% { opacity: 0.2; }
+        }
+
+        /* --- UI ELEMENTS --- */
+        .back-btn {
+            margin-top: 50px; padding: 12px 35px;
+            color: var(--neon); border: 1px solid var(--neon);
+            text-decoration: none; text-transform: uppercase;
+            letter-spacing: 3px; font-size: 13px; transition: 0.3s;
+        }
+        .back-btn:hover { background: var(--neon); color: black; box-shadow: 0 0 20px var(--neon); }
 
         #loading-screen {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: black; z-index: 2000; flex-direction: column; justify-content: center; align-items: center;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.98);
+            z-index: 3000; display: none; flex-direction: column;
+            justify-content: center; align-items: center;
         }
-        .progress-container { width: 300px; border: 1px solid #00ff00; height: 20px; margin-top: 20px; }
-        .progress-fill { width: 0%; height: 100%; background: #00ff00; transition: width 0.2s; }
+        .progress-bar { width: 350px; height: 1px; background: #111; margin-top: 20px; }
+        .progress-fill { width: 0%; height: 100%; background: var(--neon); box-shadow: 0 0 10px var(--neon); }
     </style>
 </head>
 <body>
 
-    <div id="loading-screen">
-        <h1 id="loading-title" style="text-shadow: 0 0 10px #00ff00;">DECRYPTING...</h1>
-        <div class="progress-container">
-            <div id="progress-fill" class="progress-fill"></div>
+    <div class="branding">
+        <div class="branding-text">
+            <h2>NATRAILS</h2>
+            <span style="font-size: 8px; opacity: 0.4;">STORAGE_UNIT_B</span>
         </div>
-        <p id="status-text">Bypassing security protocols...</p>
+        <img src="NATRAILS-LOGO.png" alt="LOGO">
     </div>
 
-    <div class="header">
-        <h1>DIRECTORY: /ROOT/ANOMALIES/SECTOR_09</h1>
-        <p>CAUTION: Viewing unauthorized files is a punishable offense.</p>
+    <div class="header-section">
+        <h1>ENTITY FILES</h1>
+        <p class="description">AUTHORIZED PERSONNEL ONLY. SYSTEM LOGGING ACTIVE.</p>
     </div>
 
-    <div class="folder-grid" id="grid"></div>
+    <div class="database-container" id="file-grid"></div>
+
+    <a href="Mainpage.html" class="back-btn">< RETURN_TO_SYSTEM</a>
+
+    <div id="loading-screen">
+        <h2 id="loading-title" style="letter-spacing: 10px; font-size: 14px;">DECRYPTING...</h2>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
 
     <script>
-        const grid = document.getElementById('grid');
-        const folderImg = "folder.png";
-        
-        // Configuration for Folders
-        const folders = [
-            { id: "03181523", name: "ENTITY-03181523", url: "ENTITY-03181523.html", passcode: "Sky" },
-            { id: "180102020904", name: "ENTITY-180102020904", url: "Entity-180102020904.html", passcode: "Void" }, // New Entity
-            { id: "fake1", name: "SIGNAL_LOGS" },
-            { id: "fake2", name: "BIO_SCAN_01" },
-            { id: "fake3", name: "THERMAL_IMG" },
-            { id: "fake4", name: "ENCRYPTED_04" },
-            { id: "fake5", name: "VOID_DATA" },
-            { id: "fake6", name: "SECTOR_7_MAP" },
-            { id: "fake7", name: "AUDIO_RECOVER" },
-            { id: "fake8", name: "DRONE_FEED" }
+        const files = [
+            { id: "e1", name: "ENTITY-03181523", url: "ENTITY-03181523.html" },
+            { id: "e2", name: "ENTITY-180102020904", url: "Entity-180102020904.html" },
+            { id: "img1", name: "VISUAL_DATA_01", url: "Atrails anomalies.png" },
+            { id: "f1", name: "SIGNAL_22", url: "#" },
+            { id: "f2", name: "VOID_LOG_A", url: "#" },
+            { id: "f3", name: "BIO_SCAN", url: "#" },
+            { id: "f4", name: "ENCRYPT_4", url: "#" },
+            { id: "f5", name: "SECTOR_7", url: "#" }
         ];
 
-        folders.forEach(f => {
-            let div = document.createElement('div');
-            div.className = 'folder';
-            
-            // Determine state based on localStorage
-            const isCompleted = localStorage.getItem(`completed_${f.id}`);
-            const isSeen = localStorage.getItem(`seen_${f.id}`);
+        const grid = document.getElementById('file-grid');
 
-            if (isCompleted) div.classList.add('green');
-            else if (isSeen) div.classList.add('grey');
-            else div.classList.add('blue');
+        files.forEach((file) => {
+            const div = document.createElement('div');
+            div.className = 'file-item';
+            if(sessionStorage.getItem(`opened_${file.id}`)) div.classList.add('opened');
 
-            div.innerHTML = `<img src="${folderImg}"><div>${f.name}</div>`;
-            
+            div.innerHTML = `<img src="folder.png" class="file-icon"><div class="file-name">${file.name}</div>`;
+
             div.onclick = () => {
-                // Mark as seen
-                if (!isCompleted) {
-                    localStorage.setItem(`seen_${f.id}`, "true");
-                    div.classList.remove('blue');
-                    div.classList.add('grey');
-                }
-
-                if (f.url) {
-                    let pass = prompt(`ACCESS REQUESTED FOR ${f.name}\nENTER PASSCODE:`);
-                    if (pass === f.passcode) {
-                        // Mark as completed since they got the code right
-                        localStorage.setItem(`completed_${f.id}`, "true");
-                        startLoading(f.name, f.url);
-                    } else {
-                        alert("ACCESS DENIED: INCORRECT PASSCODE.");
-                    }
-                } else {
-                    alert("CRITICAL ERROR: FILE CORRUPTED OR EMPTY.");
-                }
+                div.classList.add('opened');
+                sessionStorage.setItem(`opened_${file.id}`, 'true');
+                if(file.url !== "#") startLoading(file.name, file.url);
             };
             grid.appendChild(div);
         });
@@ -102,21 +161,17 @@
         function startLoading(name, url) {
             const screen = document.getElementById('loading-screen');
             const fill = document.getElementById('progress-fill');
-            const status = document.getElementById('status-text');
-            document.getElementById('loading-title').innerText = `DECRYPTING ${name}...`;
+            document.getElementById('loading-title').innerText = `ACCESSING ${name}...`;
             screen.style.display = 'flex';
-
             let width = 0;
             let interval = setInterval(() => {
+                width += Math.random() * 25;
                 if (width >= 100) {
                     clearInterval(interval);
                     window.location.href = url;
-                } else {
-                    width += Math.random() * 20;
-                    if (width > 100) width = 100;
-                    fill.style.width = width + "%";
                 }
-            }, 200);
+                fill.style.width = width + "%";
+            }, 120);
         }
     </script>
 </body>
