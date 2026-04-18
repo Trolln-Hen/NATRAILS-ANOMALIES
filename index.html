@@ -3,154 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NATRAILS ANOMALIES | System Boot</title>
+    <title>NATRAILS | LOGIN</title>
     <style>
-        body {
-            background-color: #0a0a0a;
-            color: #00ff00;
-            font-family: 'Courier New', Courier, monospace;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        #loading-screen {
-            position: fixed;
-            width: 100%;
-            height: 100vh;
-            background: black;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-
-        .logo-img {
-            width: 220px;
-            height: auto;
-            filter: drop-shadow(0 0 15px #00ff00);
-            animation: pulse 2s infinite;
-            margin-bottom: 20px;
-        }
-
-        .loader-container {
-            width: 300px;
-            border: 1px solid #00ff00;
-            padding: 3px;
-            margin-top: 20px;
-        }
-
-        .loader-bar {
-            height: 15px;
-            background: #00ff00;
-            width: 0%; 
-            box-shadow: 0 0 10px #00ff00;
-        }
-
-        #home-page {
-            display: none;
-            text-align: center;
-            border: 1px solid #00ff00;
-            padding: 40px;
-            box-shadow: 0 0 20px #004400;
-        }
-
-        input { background: #000; color: #00ff00; border: 1px solid #00ff00; padding: 10px; text-align: center; margin-bottom: 15px; }
-        button { background: #00ff00; color: #000; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; }
-
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        body { background-color: #050505; color: #00ff00; font-family: 'Courier New', Courier, monospace; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-container { border: 1px solid #00ff00; padding: 40px; text-align: center; box-shadow: 0 0 20px rgba(0, 255, 0, 0.2); }
+        input { background: transparent; border: none; border-bottom: 2px solid #00ff00; color: #00ff00; font-family: inherit; font-size: 20px; text-align: center; outline: none; margin-top: 20px; width: 100%; }
+        #message { margin-top: 20px; color: #ff3e3e; height: 20px; }
+        #hint { margin-top: 10px; color: #e3b341; font-size: 12px; display: none; }
+        #counter { font-size: 12px; margin-top: 10px; opacity: 0.7; }
     </style>
 </head>
 <body>
 
-    <div id="loading-screen">
-        <img src="NATRAILS-LOGO.png" alt="Logo" class="logo-img">
-        <div id="status-text">INITIALIZING SYSTEM...</div>
-        <div class="loader-container"><div id="progress" class="loader-bar"></div></div>
-    </div>
-
-    <div id="home-page">
-        <h1 style="text-shadow: 0 0 10px #00ff00;">RESTRICTED ACCESS</h1>
-        <p>ENTER ENCRYPTION KEY:</p>
-        <input type="password" id="passkey-input" placeholder="********"><br>
-        <button onclick="checkPasskey()">VERIFY IDENTITY</button>
-        <p id="message" style="color: #ff0000; margin-top: 15px;"></p>
-        <p id="counter" style="color: #00ff00; font-size: 0.8rem;"></p>
+    <div class="login-container">
+        <h3>SYSTEM ACCESS</h3>
+        <p>ENTER ENCRYPTION KEY</p>
+        <input type="password" id="pass-input" autofocus>
+        <div id="message"></div>
+        <div id="hint">HINT: Check the filenames... LOGOS</div>
+        <div id="counter">5 TRIES LEFT</div>
     </div>
 
     <script>
-        const LOCKOUT_TIME = 1 * 60 * 1000; // 1 Hour
-        const totalTime = 10000; // 10 Seconds
-
-        window.onload = function() {
-            const expiry = localStorage.getItem('lockout_expiry');
-            if (expiry && Date.now() < expiry) {
-                startLockoutTimer(expiry);
-            } else {
-                runLoader();
-            }
-        };
-
-        function runLoader() {
-            const bar = document.getElementById('progress');
-            const status = document.getElementById('status-text');
-            const phrases = ["CONNECTING...", "DECRYPTING...", "BYPASSING...", "FINALIZING..."];
-            let start = Date.now();
-
-            const interval = setInterval(() => {
-                let elapsed = Date.now() - start;
-                let percent = (elapsed / totalTime) * 100;
-                
-                if (percent >= 100) {
-                    clearInterval(interval);
-                    document.getElementById('loading-screen').style.display = 'none';
-                    document.getElementById('home-page').style.display = 'block';
-                } else {
-                    bar.style.width = percent + "%";
-                    if (percent > 25) status.innerText = phrases[1];
-                    if (percent > 50) status.innerText = phrases[2];
-                    if (percent > 75) status.innerText = phrases[3];
-                }
-            }, 50);
-        }
-
         let fails = 0;
-        function checkPasskey() {
-            const val = document.getElementById('passkey-input').value;
-            if (val === "Triangle") {
-                window.location.href = "database.html";
-            } else {
-                fails++;
-                document.getElementById('message').innerText = "ACCESS DENIED";
-                document.getElementById('counter').innerText = (5 - fails) + " TRIES LEFT";
-                if (fails >= 5) {
-                    const end = Date.now() + LOCKOUT_TIME;
-                    localStorage.setItem('lockout_expiry', end);
-                    startLockoutTimer(end);
+        const LOCKOUT_TIME = 30000; // 30 seconds for testing
+
+        document.getElementById('pass-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                const val = this.value.toUpperCase();
+                
+                // --- SUCCESS LOGIC ---
+                if (val === "NATRAILS") {
+                    window.location.href = "Mainpage.html";
+                } 
+                // --- FAILURE LOGIC ---
+                else {
+                    fails++;
+                    this.value = "";
+                    document.getElementById('message').innerText = "ACCESS DENIED";
+                    document.getElementById('counter').innerText = (5 - fails) + " TRIES LEFT";
+
+                    // HINT ON 3RD ATTEMPT
+                    if (fails === 3) {
+                        document.getElementById('hint').style.display = 'block';
+                    }
+
+                    // LOCKOUT ON 5TH ATTEMPT
+                    if (fails >= 5) {
+                        const end = Date.now() + LOCKOUT_TIME;
+                        localStorage.setItem('lockout_expiry', end);
+                        startLockoutTimer(end);
+                    }
                 }
             }
-        }
+        });
 
         function startLockoutTimer(expiry) {
-            document.getElementById('loading-screen').style.display = 'none';
-            const home = document.getElementById('home-page');
-            home.style.display = 'block';
+            const input = document.getElementById('pass-input');
+            const msg = document.getElementById('message');
+            input.disabled = true;
+
             const timer = setInterval(() => {
                 const left = expiry - Date.now();
                 if (left <= 0) {
+                    clearInterval(timer);
                     localStorage.removeItem('lockout_expiry');
                     location.reload();
                 } else {
-                    const m = Math.floor(left / 60000);
-                    const s = Math.floor((left % 60000) / 1000);
-                    home.innerHTML = `<h1 style='color:red;'>SYSTEM LOCKED</h1><p>Wait: ${m}m ${s}s</p>`;
+                    msg.innerText = `SYSTEM LOCKED: ${Math.ceil(left / 1000)}s`;
                 }
             }, 1000);
         }
+
+        // Check for existing lockout on page load
+        window.onload = () => {
+            const expiry = localStorage.getItem('lockout_expiry');
+            if (expiry && Date.now() < expiry) {
+                startLockoutTimer(expiry);
+            }
+        };
     </script>
 </body>
 </html>
