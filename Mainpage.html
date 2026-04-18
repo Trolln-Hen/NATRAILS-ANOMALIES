@@ -3,214 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NATRAILS | MAIN SYSTEM</title>
+    <title>NATRAILS | ABOUT</title>
     <style>
-        :root {
-            --neon-green: #00ff00;
-            --alert-red: #ff3e3e;
-            --bg-dark: #050505;
-            --translucent: rgba(0, 255, 0, 0.05);
-        }
-
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--bg-dark);
-            color: var(--neon-green);
+        body {
+            background-color: #050505;
+            color: #00ff00;
             font-family: 'Courier New', Courier, monospace;
-            overflow: hidden;
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
         }
 
-        /* --- LOGIN OVERLAY --- */
-        #login-overlay {
-            position: fixed;
-            inset: 0;
-            background: black;
+        /* --- LOGO SECTION (TOP RIGHT) --- */
+        .top-right-branding {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            text-align: right;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 3000;
+            align-items: flex-end;
+            gap: 10px;
+            pointer-events: none;
         }
 
-        .login-box {
-            border: 1px solid var(--neon-green);
+        .mini-logo {
+            width: 60px;
+            height: auto;
+            filter: drop-shadow(0 0 5px var(--neon-green));
+            opacity: 0.8;
+        }
+
+        .branding-title {
+            font-size: 12px;
+            letter-spacing: 2px;
+            font-weight: bold;
+            opacity: 0.6;
+        }
+
+        .document-container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(0, 255, 0, 0.02);
+            border: 1px solid rgba(0, 255, 0, 0.2);
             padding: 40px;
-            text-align: center;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+            box-shadow: inset 0 0 20px rgba(0, 255, 0, 0.05);
+            position: relative;
+            margin-top: 60px; /* Space for the logo */
         }
 
-        input {
-            background: transparent;
-            border: none;
-            border-bottom: 2px solid var(--neon-green);
-            color: var(--neon-green);
-            font-family: inherit;
-            font-size: 20px;
-            text-align: center;
-            outline: none;
-            margin-top: 20px;
+        .header-box {
+            border-bottom: 2px solid #00ff00;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
         }
 
-        /* --- WARNING OVERLAY --- */
-        #warning-screen {
-            position: fixed;
-            inset: 0;
-            background: #7a0000;
-            color: white;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            text-align: center;
-            animation: flicker 0.1s infinite;
+        h1 { font-size: 22px; margin: 0; letter-spacing: 2px; }
+        
+        .alert-text {
+            color: #ff3e3e;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            border-left: 4px solid #00ff00;
+            padding-left: 15px;
+            margin-top: 40px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        hr { border: 0; height: 1px; background: rgba(0, 255, 0, 0.2); margin: 30px 0; }
+
+        .log-notice {
+            background: rgba(255, 62, 62, 0.1);
+            border: 1px dashed #ff3e3e;
+            padding: 15px;
+            color: #ff3e3e;
+            margin: 20px 0;
+        }
+
+        .glitch {
+            opacity: 0.8;
+            animation: flicker 2s infinite;
         }
 
         @keyframes flicker {
-            0% { opacity: 1; } 50% { opacity: 0.8; } 100% { opacity: 1; }
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 0.8; }
+            20%, 24%, 55% { opacity: 0.2; }
         }
 
-        .fade-out {
-            transition: opacity 1.5s ease-out;
-            opacity: 0 !important;
-        }
-
-        /* --- MAIN DASHBOARD --- */
-        #main-content {
-            display: none;
-            height: 100vh;
-            padding: 40px;
-            box-sizing: border-box;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            background: radial-gradient(circle, rgba(0,255,0,0.05) 0%, rgba(0,0,0,1) 100%);
-        }
-
-        .left-panel {
-            border: 1px solid rgba(0, 255, 0, 0.3);
-            background: var(--translucent);
-            backdrop-filter: blur(5px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        .left-panel::before {
-            content: "SCANNING_ENVIRONMENT...";
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 10px;
-            opacity: 0.5;
-        }
-
-        .right-panel {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        /* --- BUTTONS --- */
-        .nav-btn {
-            background: transparent;
-            border: 1px solid var(--neon-green);
-            color: var(--neon-green);
-            padding: 20px;
-            font-size: 18px;
-            font-family: inherit;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: left;
-            position: relative;
+        .back-btn {
+            display: inline-block;
+            margin-top: 50px;
+            padding: 10px 20px;
+            color: #00ff00;
+            border: 1px solid #00ff00;
             text-decoration: none;
+            transition: all 0.3s;
         }
 
-        .nav-btn:hover {
-            background: var(--neon-green);
-            color: black;
-            box-shadow: 0 0 20px var(--neon-green);
-            padding-left: 40px;
-        }
-
-        .nav-btn::after {
-            content: " >";
-            position: absolute;
-            right: 20px;
+        .back-btn:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 15px #00ff00;
         }
     </style>
 </head>
 <body>
 
-    <div id="login-overlay">
-        <div class="login-box">
-            <h3>NATRAILS CENTRAL TERMINAL</h3>
-            <p>ENTER SYSTEM PASSCODE</p>
-            <input type="password" id="pass-input" autofocus>
-        </div>
+<div class="top-right-branding">
+    <img src="NATRAILS-LOGO.png" alt="NATRAILS LOGO" class="mini-logo">
+    <div class="branding-title">NATRAILS ANOMALIES</div>
+</div>
+
+<div class="document-container">
+    <div class="header-box">
+        <h1>[NATRAILS ANOMALIES // ABOUT]</h1>
+        <div class="alert-text">[ACCESS LEVEL: STAFF ONLY]</div>
     </div>
 
-    <div id="warning-screen">
-        <h1 style="font-size: 50px;">⚠️ WARNING ⚠️</h1>
-        <p>RESTRICTED DATA ACCESS DETECTED</p>
-        <p>LOCAL AUTHORITIES HAVE BEEN NOTIFIED</p>
-        <p style="margin-top: 20px; font-size: 12px;">ENCRYPTING BACKDOOR...</p>
+    <div class="alert-text" style="font-size: 12px; margin-bottom: 20px;">
+        [NOTICE: UNAUTHORIZED VIEWING WILL BE LOGGED]
     </div>
 
-    <div id="main-content">
-        <div class="left-panel">
-            <div style="border: 1px dashed rgba(0,255,0,0.2); width: 80%; height: 80%;"></div>
-        </div>
+    <p>Welcome to Natrails Anomalies.</p>
+    <p>This archive contains classified documentation regarding recorded entities, irregular phenomena, and containment events. All files stored within this system are restricted to authorized personnel only.</p>
 
-        <div class="right-panel">
-            <a href="database.html" class="nav-btn">Files</a>
-            <a href="About.html" class="nav-btn">About</a>
-            <a href="ID.html" class="nav-btn">ID Card</a>
-        </div>
+    <p class="alert-text">If you are reading this without clearance, you were not granted access.</p>
+
+    <hr>
+
+    <h3>[PURPOSE]</h3>
+    <p>Natrails Anomalies exists to observe, document, and contain that which does not conform.</p>
+    <p>Entries include:</p>
+    <ul>
+        <li>Entity records</li>
+        <li>Incident logs</li>
+        <li>Recovered fragments</li>
+        <li><strong>[FILES THAT SHOULD NOT EXIST]</strong></li>
+    </ul>
+
+    <p>Some data may appear incomplete. Some data may appear altered. <strong>This is not an error.</strong></p>
+
+    <h3>[DATA INTEGRITY NOTICE]</h3>
+    <p>You may encounter:</p>
+    <ul>
+        <li>Missing timestamps</li>
+        <li>Repeating identifiers</li>
+        <li>Corrupted visual/audio logs</li>
+        <li>Notes not written by assigned staff</li>
+    </ul>
+    <p>Do not attempt to correct or delete these anomalies. The system will retain them. The system prefers them.</p>
+
+    <hr>
+
+    <h3>[CONFIDENTIALITY PROTOCOL]</h3>
+    <p>All information within this archive is to remain undisclosed. Do not share. Do not copy. Do not remove files from this system.</p>
+    <p>Do not discuss what you see outside approved channels. Do not describe entities verbally. Do not write about them elsewhere.</p>
+    <p class="alert-text">Failure to comply will result in [ACTION REDACTED]</p>
+
+    <h3>[OBSERVATION NOTICE]</h3>
+    <p>All activity within this system is monitored. Keystrokes are logged. Access patterns are recorded. Pauses are noted.</p>
+    <div class="log-notice">
+        If a file opens without your input: <strong>continue reading.</strong>
     </div>
 
-    <script>
-        const passInput = document.getElementById('pass-input');
-        const loginOverlay = document.getElementById('login-overlay');
-        const warningScreen = document.getElementById('warning-screen');
-        const mainContent = document.getElementById('main-content');
+    <hr>
 
-        passInput.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                // You can change "NATRAILS" to whatever main passcode you want
-                if (this.value.toUpperCase() === "NATRAILS") {
-                    startSequence();
-                } else {
-                    alert("ACCESS DENIED");
-                    this.value = "";
-                }
-            }
-        });
+    <h3>[REMINDER]</h3>
+    <p>Follow all established rules. Ensure that nothing leaves this archive. Leaks have occurred before. They were contained.</p>
+    <p>We will keep watch.</p>
+    <p><strong>You are not the only one reading.</strong></p>
 
-        function startSequence() {
-            // Hide Login
-            loginOverlay.style.display = 'none';
-            
-            // Show Warning
-            warningScreen.style.display = 'flex';
-            
-            // Wait 2 seconds, then fade out warning and show home
-            setTimeout(() => {
-                warningScreen.classList.add('fade-out');
-                
-                setTimeout(() => {
-                    warningScreen.style.display = 'none';
-                    mainContent.style.display = 'grid';
-                }, 1500);
-            }, 2000);
-        }
-    </script>
+    <div style="margin-top: 40px; border-top: 1px solid rgba(0,255,0,0.2); padding-top: 20px;">
+        Natrails Anomalies<br>
+        <span class="glitch">19̴̢̾7̷̤̈́_̵̫̑3̶̼̚█̸̨̅</span>
+    </div>
+
+    <a href="Mainpage.html" class="back-btn">< RETURN_TO_SYSTEM</a>
+</div>
 
 </body>
 </html>
