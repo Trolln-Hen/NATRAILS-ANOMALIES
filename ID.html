@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NATRAILS | STAFF ID</title>
+    <style>
+        body {
+            background-color: #050505;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* --- THE ID CARD --- */
+        .id-card {
+            width: 500px;
+            height: 300px;
+            background: rgba(0, 255, 0, 0.03);
+            border: 2px solid rgba(0, 255, 0, 0.2);
+            border-radius: 10px;
+            box-shadow: inset 0 0 30px rgba(0, 255, 0, 0.05), 0 0 15px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Subtle scanline effect across the whole card */
+        .id-card::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(0deg, rgba(0,255,0,0.01) 50%, rgba(0,0,0,0) 50%);
+            background-size: 100% 4px;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        /* --- TOP SECTION --- */
+        .id-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background: rgba(0, 255, 0, 0.05);
+            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+        }
+
+        .header-logo {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.7;
+        }
+
+        .header-title {
+            font-weight: bold;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* --- MIDDLE SECTION --- */
+        .id-body {
+            flex: 1;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* LEFT PHOTO AREA */
+        .id-photo {
+            width: 140px;
+            height: 180px;
+            border: 2px solid rgba(0, 255, 0, 0.2);
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .id-photo::before {
+            content: "SCANNING...";
+            font-size: 10px;
+            opacity: 0.5;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+
+        /* RIGHT DETAILS AREA */
+        .id-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            font-size: 14px;
+        }
+
+        .label {
+            width: 80px;
+            text-transform: uppercase;
+            opacity: 0.7;
+        }
+
+        .value {
+            flex: 1;
+            font-weight: bold;
+        }
+
+        /* --- GLITCH EFFECT FOR TEXT --- */
+        .glitch {
+            opacity: 0.9;
+            animation: flicker 1s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 0.9; }
+            20%, 24%, 55% { opacity: 0.3; }
+        }
+
+        /* --- BACK BUTTON --- */
+        .back-btn {
+            display: block;
+            margin-top: 40px;
+            padding: 10px 20px;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            text-decoration: none;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .back-btn:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 15px #00ff00;
+        }
+    </style>
+</head>
+<body>
+
+<div>
+    <div class="id-card">
+        <div class="id-header">
+            <div class="header-logo">LOGO.PNG // ACCESS: ADMIN</div>
+            <div class="header-title">NATRAILS ANOMALIES</div>
+        </div>
+
+        <div class="id-body">
+            <div class="id-photo">
+                <p style="opacity: 0.3; font-size: 12px; text-align: center;">PHOTO.JPG<br>NOT FOUND</p>
+            </div>
+
+            <div class="id-details">
+                <div class="detail-item">
+                    <span class="label">Name:</span>
+                    <span class="value glitch">J̶̰̖̱̹̉͆̏̔̅͋̿̈́͘͝o̷̧̙͖͉͊͌̈̃̔̇̈́̆͘͝ͅͅh̶͎̼̗̮͈̰̀̈́̓̈͐̌͋̋̋̚͘n̵̢͓̻͔͉̮̉̈̓̇̈́̋̿͗͘͘͝</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Role:</span>
+                    <span class="value">Staff Worker</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">Room:</span>
+                    <span class="value glitch">R̶̲̆́̉͋̏͒͌̀̅͠Ö̸̰̲̖͕̦͕̥̝̥́̏̽̈́͑̋͒́̚͜͝O̵̲̫͊̈̂̂̆͌̏̏̈̔͠M̴̺͓̀̈́̔̈̈̋̅̐̿̅̔ ̷͙̹̩̼̃̈͒͋̋͑͒̇́̅̉Á̶̡̻͖̩̩̯̼̻̰̼̈̄̎̔̈́̌͋͒͠͝-̶͎̫̫̫͔̩̝͔̣̿̓̍̈́̌̅̇̃͝͝3̵̬̟̹̙̍̄̈́̋̈́̈̍̌̊͘͜ͅ</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="Mainpage.html" class="back-btn">< RETURN_TO_SYSTEM</a>
+</div>
+
+</body>
+</html>
