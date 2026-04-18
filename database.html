@@ -22,18 +22,14 @@
             min-height: 100vh; overflow-x: hidden;
         }
 
-        /* --- BRANDING --- */
         .branding {
             position: absolute; top: 30px; right: 40px;
             display: flex; align-items: center; gap: 15px;
         }
-        .branding img {
-            width: 40px; filter: brightness(0) invert(1) drop-shadow(0 0 8px var(--neon));
-        }
+        .branding img { width: 40px; filter: brightness(0) invert(1) drop-shadow(0 0 8px var(--neon)); }
         .branding-text { text-align: right; line-height: 1; }
         .branding-text h2 { margin: 0; font-size: 14px; letter-spacing: 2px; }
 
-        /* --- HEADER --- */
         .header-section {
             width: 100%; max-width: 1000px;
             border-bottom: 1px solid var(--panel-border);
@@ -42,7 +38,6 @@
         .header-section h1 { font-size: 32px; letter-spacing: 8px; margin: 0; }
         .description { font-size: 11px; opacity: 0.5; margin-top: 10px; }
 
-        /* --- FOLDER GRID --- */
         .database-container {
             width: 100%; max-width: 1000px;
             background: var(--translucent);
@@ -55,39 +50,18 @@
             box-shadow: inset 0 0 50px rgba(0, 0, 0, 1);
         }
 
-        .file-item {
-            display: flex; flex-direction: column; align-items: center;
-            cursor: pointer; transition: 0.3s; padding: 15px;
-        }
-
+        .file-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.3s; padding: 15px; }
         .file-item:hover { background: rgba(0, 255, 0, 0.05); }
 
-        /* --- DARKER NAVY FOLDERS --- */
         .file-icon {
             width: 65px; margin-bottom: 10px;
-            /* Deep Navy Filter */
             filter: sepia(1) hue-rotate(190deg) saturate(3) brightness(0.3);
             transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Opened Folder Logic */
-        .file-item.opened .file-icon {
-            filter: drop-shadow(0 0 12px var(--neon)) brightness(1.2);
-        }
+        .file-item.opened .file-icon { filter: drop-shadow(0 0 12px var(--neon)) brightness(1.2); }
+        .file-name { font-size: 10px; text-align: center; letter-spacing: 1px; }
 
-        .file-name {
-            font-size: 10px; text-align: center; letter-spacing: 1px;
-            animation: textFlicker 3s infinite;
-        }
-
-        @keyframes textFlicker {
-            0%, 90%, 100% { opacity: 1; }
-            92% { opacity: 0.5; }
-            94% { opacity: 0.8; }
-            96% { opacity: 0.2; }
-        }
-
-        /* --- UI ELEMENTS --- */
         .back-btn {
             margin-top: 50px; padding: 12px 35px;
             color: var(--neon); border: 1px solid var(--neon);
@@ -96,11 +70,19 @@
         }
         .back-btn:hover { background: var(--neon); color: black; box-shadow: 0 0 20px var(--neon); }
 
-        #loading-screen {
+        /* --- OVERLAYS --- */
+        #loading-screen, #passcode-overlay {
             position: fixed; inset: 0; background: rgba(0,0,0,0.98);
             z-index: 3000; display: none; flex-direction: column;
             justify-content: center; align-items: center;
         }
+
+        input {
+            background: transparent; border: none; border-bottom: 2px solid var(--neon);
+            color: var(--neon); font-family: inherit; font-size: 24px;
+            text-align: center; outline: none; margin-top: 20px; letter-spacing: 5px;
+        }
+
         .progress-bar { width: 350px; height: 1px; background: #111; margin-top: 20px; }
         .progress-fill { width: 0%; height: 100%; background: var(--neon); box-shadow: 0 0 10px var(--neon); }
     </style>
@@ -117,12 +99,19 @@
 
     <div class="header-section">
         <h1>ENTITY FILES</h1>
-        <p class="description">AUTHORIZED PERSONNEL ONLY. SYSTEM LOGGING ACTIVE.</p>
+        <p class="description">AUTHORIZED PERSONNEL ONLY. PASSCODE REQUIRED FOR RESTRICTED ENTITIES.</p>
     </div>
 
     <div class="database-container" id="file-grid"></div>
 
     <a href="Mainpage.html" class="back-btn">< RETURN_TO_SYSTEM</a>
+
+    <div id="passcode-overlay">
+        <h2 style="letter-spacing: 5px;">RESTRICTED ACCESS</h2>
+        <p style="font-size: 12px; opacity: 0.7;">ENTER FILE KEY</p>
+        <input type="password" id="file-pass">
+        <p id="pass-msg" style="color: #ff3e3e; margin-top: 10px; font-size: 12px;"></p>
+    </div>
 
     <div id="loading-screen">
         <h2 id="loading-title" style="letter-spacing: 10px; font-size: 14px;">DECRYPTING...</h2>
@@ -130,18 +119,19 @@
     </div>
 
     <script>
+        const RICKROLL = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
         const files = [
-            { id: "e1", name: "ENTITY-03181523", url: "ENTITY-03181523.html" },
-            { id: "e2", name: "ENTITY-180102020904", url: "Entity-180102020904.html" },
-            { id: "img1", name: "VISUAL_DATA_01", url: "Atrails anomalies.png" },
-            { id: "f1", name: "SIGNAL_22", url: "#" },
-            { id: "f2", name: "VOID_LOG_A", url: "#" },
-            { id: "f3", name: "BIO_SCAN", url: "#" },
-            { id: "f4", name: "ENCRYPT_4", url: "#" },
-            { id: "f5", name: "SECTOR_7", url: "#" }
+            { id: "e1", name: "ENTITY-03181523", url: "ENTITY-03181523.html", restricted: true },
+            { id: "e2", name: "ENTITY-180102020904", url: "Entity-180102020904.html", restricted: false },
+            { id: "f1", name: "SIGNAL_22", url: RICKROLL },
+            { id: "f2", name: "VOID_LOG_A", url: RICKROLL },
+            { id: "f3", name: "BIO_SCAN", url: RICKROLL },
+            { id: "f4", name: "ENCRYPT_4", url: RICKROLL },
+            { id: "f5", name: "SECTOR_7", url: RICKROLL }
         ];
 
         const grid = document.getElementById('file-grid');
+        let pendingUrl = "";
 
         files.forEach((file) => {
             const div = document.createElement('div');
@@ -151,11 +141,31 @@
             div.innerHTML = `<img src="folder.png" class="file-icon"><div class="file-name">${file.name}</div>`;
 
             div.onclick = () => {
-                div.classList.add('opened');
-                sessionStorage.setItem(`opened_${file.id}`, 'true');
-                if(file.url !== "#") startLoading(file.name, file.url);
+                if(file.restricted) {
+                    pendingUrl = file.url;
+                    document.getElementById('passcode-overlay').style.display = 'flex';
+                    document.getElementById('file-pass').focus();
+                } else {
+                    div.classList.add('opened');
+                    sessionStorage.setItem(`opened_${file.id}`, 'true');
+                    startLoading(file.name, file.url);
+                }
             };
             grid.appendChild(div);
+        });
+
+        // Passcode logic for Restricted Files
+        document.getElementById('file-pass').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                if (this.value.toLowerCase() === "sky") {
+                    document.getElementById('passcode-overlay').style.display = 'none';
+                    this.value = "";
+                    startLoading("RESTRICTED DATA", pendingUrl);
+                } else {
+                    document.getElementById('pass-msg').innerText = "INVALID KEY";
+                    this.value = "";
+                }
+            }
         });
 
         function startLoading(name, url) {
