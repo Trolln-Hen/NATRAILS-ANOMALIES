@@ -71,8 +71,8 @@
             transition: width 0.1s linear;
         }
 
-        /* --- LOGIN SCREEN --- */
-        #login-screen {
+        /* --- MAIN SCREEN CONTAINER --- */
+        #main-container {
             display: none;
             flex-direction: column;
             align-items: center;
@@ -84,6 +84,7 @@
             opacity: 0;
             transition: opacity 1s ease-in;
             text-align: center;
+            min-width: 350px;
         }
 
         h2 { margin: 0 0 10px 0; letter-spacing: 2px; }
@@ -136,10 +137,42 @@
         #message { margin-top: 20px; color: var(--red); height: 20px; font-weight: bold; text-shadow: 0 0 5px var(--red); }
         #hint { margin-top: 15px; color: #e3b341; font-size: 13px; display: none; text-shadow: 0 0 5px #e3b341; }
         
+        /* --- LOCKOUT UI --- */
+        #lockout-content { display: none; }
+        
+        #countdown-timer {
+            font-size: 48px;
+            font-weight: bold;
+            color: var(--red);
+            text-shadow: 0 0 15px var(--red);
+            margin: 20px 0;
+            letter-spacing: 5px;
+        }
+
+        #lockout-facts {
+            display: none;
+            margin-top: 30px;
+            border-top: 1px dashed rgba(0, 255, 0, 0.3);
+            padding-top: 20px;
+            font-size: 14px;
+            color: #8b949e;
+        }
+
+        .glitch {
+            opacity: 0.9;
+            animation: flicker 1s infinite;
+            color: #fff;
+        }
+
         @keyframes pulse {
             0% { filter: drop-shadow(0 0 5px var(--neon)); }
             50% { filter: drop-shadow(0 0 20px var(--neon)); }
             100% { filter: drop-shadow(0 0 5px var(--neon)); }
+        }
+
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 0.9; }
+            20%, 24%, 55% { opacity: 0.3; }
         }
     </style>
 </head>
@@ -154,28 +187,66 @@
         </div>
     </div>
 
-    <div id="login-screen">
-        <img src="NATRAILS-LOGO.png" alt="Logo" style="width: 80px; margin-bottom: 20px;">
-        <h2>SYSTEM ACCESS</h2>
-        <p style="margin:0; font-size: 12px; opacity: 0.7;">AUTHORIZED PERSONNEL ONLY</p>
+    <div id="main-container">
         
-        <div class="input-group">
-            <input type="password" id="pass-input" placeholder="ENTER PASSCODE">
-            <button class="submit-btn" id="submit-btn">ENTER PASSCODE</button>
+        <div id="login-box-content">
+            <img src="NATRAILS-LOGO.png" alt="Logo" style="width: 80px; margin-bottom: 20px;">
+            <h2>SYSTEM ACCESS</h2>
+            <p style="margin:0; font-size: 12px; opacity: 0.7;">AUTHORIZED PERSONNEL ONLY</p>
+            
+            <div class="input-group">
+                <input type="password" id="pass-input" placeholder="ENTER PASSCODE">
+                <button class="submit-btn" id="submit-btn">ENTER PASSCODE</button>
+            </div>
+
+            <div id="message"></div>
+            <div id="hint">SYSTEM HINT: LOGOS</div>
         </div>
 
-        <div id="message"></div>
-        <div id="hint">SYSTEM HINT: LOGOS</div>
+        <div id="lockout-content">
+            <h2 style="color: var(--red);">CRITICAL BREACH DETECTED</h2>
+            <p>TOO MANY FAILED ATTEMPTS.<br>TERMINAL LOCKED TO PREVENT DATA COMPROMISE.</p>
+            
+            <div id="countdown-timer">01:00:00</div>
+
+            <div id="lockout-facts">
+                <p><strong>[SYSTEM IDLE THOUGHTS]</strong></p>
+                <p>Natrails is a place located in <span class="glitch">S̵E̵C̵T̸O̵R̵ ̸N̷U̵L̷L̶</span></p>
+                <p>Watch <strong>Trolln' Hen</strong> meanwhile.</p>
+            </div>
+        </div>
+
     </div>
 
     <script>
+        const ONE_HOUR = 60 * 60 * 1000;
+        let fails = 0;
+        
+        // UI Elements
+        const passInput = document.getElementById('pass-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const messageDiv = document.getElementById('message');
+        const hintDiv = document.getElementById('hint');
+        const loginBox = document.getElementById('login-box-content');
+        const lockoutBox = document.getElementById('lockout-content');
+        const timerText = document.getElementById('countdown-timer');
+        const factsBox = document.getElementById('lockout-facts');
+        const mainContainer = document.getElementById('main-container');
+
         // --- BOOT UP SEQUENCE ---
         window.onload = () => {
+            const expiry = localStorage.getItem('lockout_expiry');
+            let isLocked = false;
+            
+            if (expiry && Date.now() < expiry) {
+                isLocked = true;
+            } else if (expiry) {
+                localStorage.removeItem('lockout_expiry'); // Remove old lockout
+            }
+
             let width = 0;
             const loadingBar = document.getElementById('loading-bar');
             const bootScreen = document.getElementById('loading-screen');
-            const loginScreen = document.getElementById('login-screen');
-            const inputField = document.getElementById('pass-input');
 
             let interval = setInterval(() => {
                 width += Math.random() * 15;
@@ -183,15 +254,18 @@
                     width = 100;
                     clearInterval(interval);
                     
-                    // Fade out boot, fade in login
                     bootScreen.style.opacity = '0';
                     setTimeout(() => {
                         bootScreen.style.display = 'none';
-                        loginScreen.style.display = 'flex';
-                        // Trigger reflow for fade in
-                        void loginScreen.offsetWidth;
-                        loginScreen.style.opacity = '1';
-                        inputField.focus();
+                        mainContainer.style.display = 'flex';
+                        void mainContainer.offsetWidth; // Trigger reflow
+                        mainContainer.style.opacity = '1';
+                        
+                        if (isLocked) {
+                            triggerLockoutUI(expiry);
+                        } else {
+                            passInput.focus();
+                        }
                     }, 1000);
                 }
                 loadingBar.style.width = width + '%';
@@ -199,14 +273,7 @@
         };
 
         // --- LOGIN LOGIC ---
-        let fails = 0;
-        const passInput = document.getElementById('pass-input');
-        const submitBtn = document.getElementById('submit-btn');
-        const messageDiv = document.getElementById('message');
-        const hintDiv = document.getElementById('hint');
-
         function attemptLogin() {
-            // Case-insensitive check for "Triangle"
             if (passInput.value.toLowerCase() === "triangle") {
                 messageDiv.style.color = "#00ff00";
                 messageDiv.innerText = "ACCESS GRANTED. REROUTING...";
@@ -217,27 +284,58 @@
                 fails++;
                 passInput.value = "";
                 messageDiv.style.color = "#ff3e3e";
-                messageDiv.innerText = `ACCESS DENIED (${fails}/5)`;
+                messageDiv.innerText = `ACCESS DENIED (${fails}/3)`;
 
-                if (fails === 3) {
+                // HINT ON 2ND FAILED ATTEMPT (gives them 1 last try)
+                if (fails === 2) {
                     hintDiv.style.display = 'block';
                 }
-                if (fails >= 5) {
-                    messageDiv.innerText = "SYSTEM LOCKED. REFRESH TO REBOOT.";
-                    passInput.disabled = true;
-                    submitBtn.disabled = true;
+                
+                // LOCKOUT ON 3RD FAILED ATTEMPT
+                if (fails >= 3) {
+                    const lockoutEndTime = Date.now() + ONE_HOUR;
+                    localStorage.setItem('lockout_expiry', lockoutEndTime);
+                    triggerLockoutUI(lockoutEndTime);
                 }
             }
         }
 
-        // Trigger on Button Click
-        submitBtn.addEventListener('click', attemptLogin);
+        // --- TIMER AND LOCKOUT LOGIC ---
+        function triggerLockoutUI(expiryTime) {
+            loginBox.style.display = 'none';
+            lockoutBox.style.display = 'block';
 
-        // Trigger on Enter Key
+            const timerInterval = setInterval(() => {
+                const timeLeft = expiryTime - Date.now();
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    localStorage.removeItem('lockout_expiry');
+                    location.reload(); // Reload page so they can try again
+                } else {
+                    // Calculate hours, minutes, seconds
+                    const h = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const m = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                    const s = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+                    // Format with leading zeros
+                    timerText.innerText = 
+                        (h < 10 ? "0" + h : h) + ":" + 
+                        (m < 10 ? "0" + m : m) + ":" + 
+                        (s < 10 ? "0" + s : s);
+
+                    // SHOW FACTS WHEN TIME LEFT IS <= 30 MINUTES (1,800,000 milliseconds)
+                    if (timeLeft <= 1800000) {
+                        factsBox.style.display = 'block';
+                    }
+                }
+            }, 1000);
+        }
+
+        // Event Listeners for submission
+        submitBtn.addEventListener('click', attemptLogin);
         passInput.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                attemptLogin();
-            }
+            if (e.key === 'Enter') { attemptLogin(); }
         });
     </script>
 
