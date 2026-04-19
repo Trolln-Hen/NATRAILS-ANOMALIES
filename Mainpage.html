@@ -140,19 +140,21 @@
 
         /* --- PUZZLE BOARD STYLING --- */
 #puzzle-board {
-    position: relative;
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 columns */
-    grid-template-rows: repeat(3, 1fr);    /* 3 rows */
-    gap: 10px;
-    padding: 20px;
+    grid-template-columns: repeat(4, 1fr); 
+    grid-template-rows: repeat(4, 1fr);
+    gap: 0; 
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border: 2px solid var(--panel-border);
+    background-color: #000;
 }
 
 .placed-piece {
     width: 100%;
-    height: auto;
-    filter: drop-shadow(0 0 8px var(--neon));
-    animation: pieceAppear 1.5s ease-out;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 @keyframes pieceAppear {
@@ -192,36 +194,47 @@
 </div>
     
 <script>
-    window.onload = () => {
-        const warning = document.getElementById('warning-page');
-        const home = document.getElementById('home-page');
-        const board = document.getElementById('puzzle-board');
+   window.onload = () => {
+    const board = document.getElementById('puzzle-board');
 
-        // --- PUZZLE LOGIC: Check for Piece 4 ---
-        if (localStorage.getItem('fragment_4_collected') === 'true') {
+    // 1. Pieces 1 to 12 (Standard size)
+    for (let i = 1; i <= 12; i++) {
+        if (localStorage.getItem(`fragment_${i}_collected`) === 'true') {
             const img = document.createElement('img');
-            img.src = 'Piece4.png';
+            img.src = `piece${i}.png`;
             img.className = 'placed-piece';
             
-            // Positioning based on 'piece by piece.png'
-            // Change these numbers if it needs to be in a different slot!
-            img.style.gridColumn = "4"; 
-            img.style.gridRow = "1";
-
+            let col = ((i - 1) % 4) + 1;
+            let row = Math.floor((i - 1) / 4) + 1;
+            
+            img.style.gridColumn = col;
+            img.style.gridRow = row;
             board.appendChild(img);
         }
-        // Check for Piece 13
-if (localStorage.getItem('fragment_13_collected') === 'true') {
-    const img13 = document.createElement('img');
-    img13.src = 'piece13.png';
-    img13.className = 'placed-piece';
-    
-    // Position it (Adjust gridColumn and gridRow as needed)
-    img13.style.gridColumn = "1"; 
-    img13.style.gridRow = "2";
+    }
 
-    board.appendChild(img13);
-}
+    // 2. Piece 13 (Double-wide, bottom left)
+    if (localStorage.getItem('fragment_13_collected') === 'true') {
+        const img13 = document.createElement('img');
+        img13.src = 'piece13.png';
+        img13.className = 'placed-piece';
+        img13.style.gridRow = "4";
+        img13.style.gridColumn = "1 / span 2"; 
+        board.appendChild(img13);
+    }
+
+    // 3. Piece 14 (Double-wide, bottom right)
+    if (localStorage.getItem('fragment_14_collected') === 'true') {
+        const img14 = document.createElement('img');
+        img14.src = 'piece14.png';
+        img14.className = 'placed-piece';
+        img14.style.gridRow = "4";
+        img14.style.gridColumn = "3 / span 2"; 
+        board.appendChild(img14);
+    }
+
+    // Keep whatever transition/warning bypass logic you already had here below this
+};
 
         // --- EXISTING TRANSITION LOGIC ---
         if (sessionStorage.getItem('warning_bypassed')) {
