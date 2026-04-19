@@ -194,10 +194,13 @@
 </div>
     
 <script>
-   window.onload = () => {
+window.onload = () => {
     const board = document.getElementById('puzzle-board');
+    const warning = document.getElementById('warning-page');
+    const home = document.getElementById('home-page');
 
-    // 1. Pieces 1 to 12 (Standard size)
+    // 1. PIECE LOADING LOGIC
+    // Normal pieces 1-12
     for (let i = 1; i <= 12; i++) {
         if (localStorage.getItem(`fragment_${i}_collected`) === 'true') {
             const img = document.createElement('img');
@@ -213,46 +216,43 @@
         }
     }
 
-    // 2. Piece 13 (Double-wide, bottom left)
+    // Double-wide Piece 13
     if (localStorage.getItem('fragment_13_collected') === 'true') {
         const img13 = document.createElement('img');
         img13.src = 'piece13.png';
         img13.className = 'placed-piece';
         img13.style.gridRow = "4";
-        img13.style.gridColumn = "1 / span 2"; 
+        img13.style.gridColumn = "1 / span 2";
         board.appendChild(img13);
     }
 
-    // 3. Piece 14 (Double-wide, bottom right)
+    // Double-wide Piece 14
     if (localStorage.getItem('fragment_14_collected') === 'true') {
         const img14 = document.createElement('img');
         img14.src = 'piece14.png';
         img14.className = 'placed-piece';
         img14.style.gridRow = "4";
-        img14.style.gridColumn = "3 / span 2"; 
+        img14.style.gridColumn = "3 / span 2";
         board.appendChild(img14);
     }
 
-    // Keep whatever transition/warning bypass logic you already had here below this
-};
-
-        // --- EXISTING TRANSITION LOGIC ---
-        if (sessionStorage.getItem('warning_bypassed')) {
+    // 2. TRANSITION LOGIC
+    if (sessionStorage.getItem('warning_bypassed')) {
+        home.style.display = 'grid';
+        setTimeout(() => { home.style.opacity = '1'; }, 50);
+    } else {
+        warning.style.display = 'flex';
+        setTimeout(() => {
+            warning.style.opacity = '0';
             home.style.display = 'grid';
-            setTimeout(() => { home.style.opacity = '1'; }, 50);
-        } else {
-            warning.style.display = 'flex';
+            sessionStorage.setItem('warning_bypassed', 'true');
             setTimeout(() => {
-                warning.style.opacity = '0';
-                home.style.display = 'grid';
-                sessionStorage.setItem('warning_bypassed', 'true');
-                setTimeout(() => {
-                    warning.style.display = 'none';
-                    home.style.opacity = '1';
-                }, 1000);
-            }, 2500);
-        }
-    };
+                warning.style.display = 'none';
+                home.style.opacity = '1';
+            }, 1000);
+        }, 2500);
+    }
+};
 </script>
 </body>
 </html>
