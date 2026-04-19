@@ -210,6 +210,18 @@
 
             board.appendChild(img);
         }
+        // Check for Piece 13
+if (localStorage.getItem('fragment_13_collected') === 'true') {
+    const img13 = document.createElement('img');
+    img13.src = 'piece13.png';
+    img13.className = 'placed-piece';
+    
+    // Position it (Adjust gridColumn and gridRow as needed)
+    img13.style.gridColumn = "1"; 
+    img13.style.gridRow = "2";
+
+    board.appendChild(img13);
+}
 
         // --- EXISTING TRANSITION LOGIC ---
         if (sessionStorage.getItem('warning_bypassed')) {
