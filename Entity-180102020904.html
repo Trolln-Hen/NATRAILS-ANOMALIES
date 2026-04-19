@@ -153,12 +153,39 @@
 
     <p><strong>[END OF FILE]</strong></p>
 
-    <div class="puzzle-box">
-        <div class="puzzle-title">🧩 COLLECTIBLE PUZZLE PIECE</div>
-        <p><strong>[FRAGMENT 2/12 SECURED]</strong><br>
-        <code>Item Name: The Static Shard</code></p>
-        <p><em>A small, transparent sliver that seems to vibrate at a high frequency. When you look through it, the room behind it appears to be missing its colors.</em></p>
+    <div class="puzzle-box" style="margin-top: 40px; border: 1px dashed #00ff00; padding: 20px; text-align: center;">
+    <div id="fragment-container">
+        <p style="font-size: 12px; opacity: 0.7;">RECOVERED ARTIFACT DETECTED:</p>
+        <img src="piece13.png" id="puzzle-piece" style="width: 100px; cursor: pointer; transition: transform 0.3s;" alt="Fragment">
     </div>
+    <div id="collection-msg" style="display: none; color: #00ff00; font-weight: bold; letter-spacing: 2px;">
+        [FRAGMENT 13 COLLECTED]
+    </div>
+</div>
+
+<script>
+    const piece = document.getElementById('puzzle-piece');
+    const container = document.getElementById('fragment-container');
+    const msg = document.getElementById('collection-msg');
+
+    // Check if Piece 13 was already collected
+    if (localStorage.getItem('fragment_13_collected') === 'true') {
+        container.style.display = 'none';
+        msg.style.display = 'block';
+    }
+
+    piece.onclick = () => {
+        piece.style.transform = 'scale(0)';
+        piece.style.opacity = '0';
+        
+        setTimeout(() => {
+            // Save 'true' to memory for fragment 13
+            localStorage.setItem('fragment_13_collected', 'true');
+            container.style.display = 'none';
+            msg.style.display = 'block';
+        }, 500);
+    };
+</script>
 
     <a href="database.html" class="back-btn">< RETURN_TO_DIRECTORY_</a>
 
