@@ -168,7 +168,7 @@
     const container = document.getElementById('fragment-container');
     const msg = document.getElementById('collection-msg');
 
-    // Check if Piece 13 was already collected
+    // CHANGE 'X' TO YOUR PIECE NUMBER
     if (localStorage.getItem('fragment_13_collected') === 'true') {
         container.style.display = 'none';
         msg.style.display = 'block';
@@ -179,14 +179,13 @@
         piece.style.opacity = '0';
         
         setTimeout(() => {
-            // Save 'true' to memory for fragment 13
+            // CHANGE 'X' TO YOUR PIECE NUMBER
             localStorage.setItem('fragment_13_collected', 'true');
             container.style.display = 'none';
             msg.style.display = 'block';
         }, 500);
     };
 </script>
-
     <a href="database.html" class="back-btn">< RETURN_TO_DIRECTORY_</a>
 
 </div>
