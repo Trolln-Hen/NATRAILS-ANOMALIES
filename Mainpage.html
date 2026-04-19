@@ -136,6 +136,28 @@
             box-shadow: 0 0 30px var(--neon);
             transform: translateX(10px);
         }
+
+        /* --- PUZZLE BOARD STYLING --- */
+#puzzle-board {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columns */
+    grid-template-rows: repeat(3, 1fr);    /* 3 rows */
+    gap: 10px;
+    padding: 20px;
+}
+
+.placed-piece {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 0 8px var(--neon));
+    animation: pieceAppear 1.5s ease-out;
+}
+
+@keyframes pieceAppear {
+    from { opacity: 0; transform: scale(2) rotate(15deg); }
+    to { opacity: 1; transform: scale(1) rotate(0deg); }
+}
     </style>
 </head>
 <body>
@@ -154,8 +176,10 @@
     </div>
 
     <div id="home-page">
-        <div class="left-panel">
-            <div class="internal-box"></div>
+       <div class="left-panel">
+    <div class="internal-box" id="puzzle-board">
+        </div>
+</div>
         </div>
         <div class="right-panel">
             <a href="database.html" class="nav-btn">Files</a>
@@ -164,33 +188,43 @@
         </div>
     </div>
 
-    <script>
-        window.onload = () => {
-            const warning = document.getElementById('warning-page');
-            const home = document.getElementById('home-page');
+<script>
+    window.onload = () => {
+        const warning = document.getElementById('warning-page');
+        const home = document.getElementById('home-page');
+        const board = document.getElementById('puzzle-board');
 
-            // Check if we've already seen the warning in this browser session
-            if (sessionStorage.getItem('warning_bypassed')) {
-                // SKIP WARNING: Show home immediately with fade
+        // --- PUZZLE LOGIC: Check for Piece 4 ---
+        if (localStorage.getItem('fragment_4_collected') === 'true') {
+            const img = document.createElement('img');
+            img.src = 'piece 4.png';
+            img.className = 'placed-piece';
+            
+            // Positioning based on 'piece by piece.png'
+            // Change these numbers if it needs to be in a different slot!
+            img.style.gridColumn = "4"; 
+            img.style.gridRow = "1";
+
+            board.appendChild(img);
+        }
+
+        // --- EXISTING TRANSITION LOGIC ---
+        if (sessionStorage.getItem('warning_bypassed')) {
+            home.style.display = 'grid';
+            setTimeout(() => { home.style.opacity = '1'; }, 50);
+        } else {
+            warning.style.display = 'flex';
+            setTimeout(() => {
+                warning.style.opacity = '0';
                 home.style.display = 'grid';
+                sessionStorage.setItem('warning_bypassed', 'true');
                 setTimeout(() => {
+                    warning.style.display = 'none';
                     home.style.opacity = '1';
-                }, 50);
-            } else {
-                // SHOW WARNING: First time entering
-                warning.style.display = 'flex';
-                setTimeout(() => {
-                    warning.style.opacity = '0';
-                    home.style.display = 'grid';
-                    sessionStorage.setItem('warning_bypassed', 'true'); // Set the flag
-                    
-                    setTimeout(() => {
-                        warning.style.display = 'none';
-                        home.style.opacity = '1';
-                    }, 1000);
-                }, 2500);
-            }
-        };
-    </script>
+                }, 1000);
+            }, 2500);
+        }
+    };
+</script>
 </body>
 </html>
