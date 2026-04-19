@@ -8,83 +8,95 @@
         :root {
             --neon: #00ff00;
             --bg: #020202;
+            --red: #ff2a2a;
+            --grey: #888888;
             --translucent: rgba(0, 255, 0, 0.03);
             --panel-border: rgba(0, 255, 0, 0.15);
         }
 
-        body {
+        body, html {
             background-color: var(--bg);
-            background: radial-gradient(circle at center, #080808 0%, #000 100%);
+            background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%);
             color: var(--neon);
             font-family: 'Courier New', Courier, monospace;
-            margin: 0; padding: 40px;
+            margin: 0; padding: 0; min-height: 100vh;
             display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh; overflow-x: hidden;
+            overflow-x: hidden;
+            user-select: none;
         }
 
-        .branding {
-            position: absolute; top: 30px; right: 40px;
-            display: flex; align-items: center; gap: 15px;
+        /* --- CRT SCANLINE EFFECT --- */
+        body::before {
+            content: " "; display: block; position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 100; background-size: 100% 2px, 3px 100%; pointer-events: none;
         }
-        .branding img { width: 40px; filter: brightness(0) invert(1) drop-shadow(0 0 8px var(--neon)); }
+
+        .container { padding: 40px; width: 100%; max-width: 1000px; box-sizing: border-box; z-index: 10; position: relative; }
+
+        .branding { position: absolute; top: 30px; right: 40px; display: flex; align-items: center; gap: 15px; }
+        .branding img { width: 40px; filter: brightness(0) invert(1) drop-shadow(0 0 8px var(--neon)); animation: pulse 3s infinite; }
         .branding-text { text-align: right; line-height: 1; }
         .branding-text h2 { margin: 0; font-size: 14px; letter-spacing: 2px; }
 
-        .header-section {
-            width: 100%; max-width: 1000px;
-            border-bottom: 1px solid var(--panel-border);
-            margin-bottom: 40px; padding-bottom: 20px;
-        }
-        .header-section h1 { font-size: 32px; letter-spacing: 8px; margin: 0; }
-        .description { font-size: 11px; opacity: 0.5; margin-top: 10px; }
+        .header-section { border-bottom: 1px solid var(--panel-border); margin-bottom: 40px; padding-bottom: 20px; margin-top: 20px; }
+        .header-section h1 { font-size: 32px; letter-spacing: 8px; margin: 0; text-shadow: 0 0 10px rgba(0,255,0,0.3); }
+        .description { font-size: 11px; opacity: 0.6; margin-top: 10px; }
 
         .database-container {
-            width: 100%; max-width: 1000px;
-            background: var(--translucent);
-            border: 1px solid var(--panel-border);
-            backdrop-filter: blur(15px);
-            padding: 40px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 25px;
-            box-shadow: inset 0 0 50px rgba(0, 0, 0, 1);
+            background: var(--translucent); border: 1px solid var(--panel-border);
+            backdrop-filter: blur(15px); padding: 40px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 30px; box-shadow: inset 0 0 50px rgba(0, 0, 0, 1);
         }
 
-        .file-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.3s; padding: 15px; }
-        .file-item:hover { background: rgba(0, 255, 0, 0.05); }
+        /* --- FOLDER ITEM STYLING --- */
+        .file-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.3s; padding: 15px; position: relative; }
+        .file-item:hover { background: rgba(255, 255, 255, 0.03); transform: translateY(-3px); }
+        .file-name { font-size: 10px; text-align: center; letter-spacing: 1px; margin-top: 10px; font-weight: bold; }
+        .file-icon { width: 65px; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        .file-icon {
-            width: 65px; margin-bottom: 10px;
-            filter: sepia(1) hue-rotate(190deg) saturate(3) brightness(0.3);
-            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        /* --- THE COLOR CODES --- */
+        /* 1. Navy (Unopened/Untouched) */
+        .folder-navy .file-icon { filter: sepia(1) hue-rotate(190deg) saturate(3) brightness(0.3); }
+        .folder-navy .file-name { color: #4a7ab5; }
 
-        .file-item.opened .file-icon { filter: drop-shadow(0 0 12px var(--neon)) brightness(1.2); }
-        .file-name { font-size: 10px; text-align: center; letter-spacing: 1px; }
+        /* 2. Grey (Opened but not solved) */
+        .folder-grey .file-icon { filter: grayscale(1) brightness(0.6); }
+        .folder-grey .file-name { color: var(--grey); opacity: 0.8; }
 
-        .back-btn {
-            margin-top: 50px; padding: 12px 35px;
-            color: var(--neon); border: 1px solid var(--neon);
-            text-decoration: none; text-transform: uppercase;
-            letter-spacing: 3px; font-size: 13px; transition: 0.3s;
-        }
+        /* 3. Red (Blocked / Locked out) */
+        .folder-red .file-icon { filter: sepia(1) hue-rotate(330deg) saturate(5) brightness(0.7) drop-shadow(0 0 10px var(--red)); }
+        .folder-red .file-name { color: var(--red); animation: textFlicker 2s infinite; text-shadow: 0 0 5px var(--red); }
+
+        /* 4. Green (Unlocked / Access Granted) */
+        .folder-green .file-icon { filter: drop-shadow(0 0 12px var(--neon)) brightness(1.2); }
+        .folder-green .file-name { color: var(--neon); text-shadow: 0 0 5px var(--neon); }
+
+        .back-btn { display: inline-block; margin-top: 50px; padding: 12px 35px; color: var(--neon); border: 1px solid var(--neon); text-decoration: none; text-transform: uppercase; letter-spacing: 3px; font-size: 13px; transition: 0.3s; }
         .back-btn:hover { background: var(--neon); color: black; box-shadow: 0 0 20px var(--neon); }
 
         /* --- OVERLAYS --- */
-        #loading-screen, #passcode-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.98);
-            z-index: 3000; display: none; flex-direction: column;
-            justify-content: center; align-items: center;
-        }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 3000; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        
+        /* Passcode UI */
+        input { background: rgba(0,255,0,0.05); border: 1px solid var(--neon); color: var(--neon); font-family: inherit; font-size: 20px; text-align: center; outline: none; padding: 15px; margin-top: 20px; letter-spacing: 5px; width: 250px; }
+        input:focus { box-shadow: 0 0 15px rgba(0,255,0,0.3); }
+        #hint-text { color: #e3b341; font-size: 12px; margin-top: 15px; display: none; text-shadow: 0 0 5px #e3b341; letter-spacing: 2px; }
+        #error-msg { color: var(--red); margin-top: 10px; font-size: 12px; height: 15px; font-weight: bold; letter-spacing: 1px; }
 
-        input {
-            background: transparent; border: none; border-bottom: 2px solid var(--neon);
-            color: var(--neon); font-family: inherit; font-size: 24px;
-            text-align: center; outline: none; margin-top: 20px; letter-spacing: 5px;
-        }
+        /* Lockout UI */
+        #lockout-timer-display { font-size: 40px; color: var(--red); text-shadow: 0 0 15px var(--red); letter-spacing: 5px; margin: 20px 0; }
+        .cancel-btn { margin-top: 30px; background: transparent; border: 1px solid var(--grey); color: var(--grey); padding: 10px 20px; cursor: pointer; font-family: inherit; transition: 0.3s; }
+        .cancel-btn:hover { border-color: white; color: white; }
 
-        .progress-bar { width: 350px; height: 1px; background: #111; margin-top: 20px; }
+        /* Loading UI */
+        .progress-bar { width: 350px; height: 2px; background: #111; margin-top: 20px; }
         .progress-fill { width: 0%; height: 100%; background: var(--neon); box-shadow: 0 0 10px var(--neon); }
+
+        @keyframes textFlicker { 0%, 90%, 100% { opacity: 1; } 92% { opacity: 0.3; } 94% { opacity: 0.8; } 96% { opacity: 0.1; } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
     </style>
 </head>
 <body>
@@ -97,76 +109,205 @@
         <img src="NATRAILS-LOGO.png" alt="LOGO">
     </div>
 
-    <div class="header-section">
-        <h1>ENTITY FILES</h1>
-        <p class="description">AUTHORIZED PERSONNEL ONLY. PASSCODE REQUIRED FOR RESTRICTED ENTITIES.</p>
+    <div class="container">
+        <div class="header-section">
+            <h1>ENTITY FILES</h1>
+            <p class="description">AUTHORIZED PERSONNEL ONLY. FAILED DECRYPTION ATTEMPTS WILL RESULT IN A 5-MINUTE SECTOR LOCKDOWN.</p>
+        </div>
+
+        <div class="database-container" id="file-grid"></div>
+
+        <a href="Mainpage.html" class="back-btn">< RETURN_TO_SYSTEM</a>
     </div>
 
-    <div class="database-container" id="file-grid"></div>
-
-    <a href="Mainpage.html" class="back-btn">< RETURN_TO_SYSTEM</a>
-
-    <div id="passcode-overlay">
-        <h2 style="letter-spacing: 5px;">RESTRICTED ACCESS</h2>
-        <p style="font-size: 12px; opacity: 0.7;">ENTER FILE KEY</p>
-        <input type="password" id="file-pass">
-        <p id="pass-msg" style="color: #ff3e3e; margin-top: 10px; font-size: 12px;"></p>
+    <div id="passcode-overlay" class="overlay">
+        <h2 style="letter-spacing: 5px;">ENCRYPTED ENTITY LOG</h2>
+        <p style="font-size: 12px; opacity: 0.7;">ENTER CLEARANCE KEY</p>
+        <input type="password" id="file-pass" autocomplete="off">
+        <p id="error-msg"></p>
+        <p id="hint-text"></p>
+        <button class="cancel-btn" onclick="closeOverlays()">ABORT</button>
     </div>
 
-    <div id="loading-screen">
+    <div id="lockout-overlay" class="overlay">
+        <h2 style="color: var(--red); letter-spacing: 5px;">SECURITY LOCKDOWN ACTIVE</h2>
+        <p style="color: var(--grey); font-size: 12px;">MAXIMUM ATTEMPTS EXCEEDED. FILE CORRUPTION PROTECTION ENGAGED.</p>
+        <div id="lockout-timer-display">05:00</div>
+        <button class="cancel-btn" onclick="closeOverlays()">RETURN</button>
+    </div>
+
+    <div id="loading-screen" class="overlay">
         <h2 id="loading-title" style="letter-spacing: 10px; font-size: 14px;">DECRYPTING...</h2>
         <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
     </div>
 
     <script>
         const RICKROLL = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+        const LOCKDOWN_TIME = 5 * 60 * 1000; // 5 Minutes in milliseconds
+
         const files = [
-            { id: "e1", name: "ENTITY-03181523", url: "ENTITY-03181523.html", restricted: true },
-            { id: "e2", name: "ENTITY-180102020904", url: "Entity-180102020904.html", restricted: false },
-            { id: "f1", name: "SIGNAL_22", url: RICKROLL },
-            { id: "f2", name: "VOID_LOG_A", url: RICKROLL },
-            { id: "f3", name: "BIO_SCAN", url: RICKROLL },
-            { id: "f4", name: "ENCRYPT_4", url: RICKROLL },
-            { id: "f5", name: "SECTOR_7", url: RICKROLL }
+            { id: "03181523", name: "ENTITY-03181523", url: "ENTITY-03181523.html", restricted: true, pass: "sky", hint: "CROW" },
+            { id: "180102020904", name: "ENTITY-180102020904", url: "Entity-180102020904.html", restricted: true, pass: "hole", hint: "RABBIT" },
+            { id: "img1", name: "VISUAL_DATA_01", url: "Atrails anomalies.png", restricted: false },
+            { id: "f1", name: "SIGNAL_22", url: RICKROLL, restricted: false },
+            { id: "f2", name: "VOID_LOG_A", url: RICKROLL, restricted: false },
+            { id: "f3", name: "BIO_SCAN", url: RICKROLL, restricted: false },
+            { id: "f4", name: "ENCRYPT_4", url: RICKROLL, restricted: false },
+            { id: "f5", name: "SECTOR_7", url: RICKROLL, restricted: false }
         ];
 
-        const grid = document.getElementById('file-grid');
-        let pendingUrl = "";
+        let currentFileId = null;
+        let activeLockoutInterval = null;
 
-        files.forEach((file) => {
-            const div = document.createElement('div');
-            div.className = 'file-item';
-            if(sessionStorage.getItem(`opened_${file.id}`)) div.classList.add('opened');
+        // Initialize Grid
+        function renderGrid() {
+            const grid = document.getElementById('file-grid');
+            grid.innerHTML = ''; // clear
 
-            div.innerHTML = `<img src="folder.png" class="file-icon"><div class="file-name">${file.name}</div>`;
+            files.forEach((file) => {
+                const div = document.createElement('div');
+                div.className = 'file-item';
+                
+                // Determine Folder State
+                let stateClass = 'folder-navy'; // Default
+                const lockoutExpiry = localStorage.getItem(`lockout_${file.id}`);
+                const fails = parseInt(localStorage.getItem(`fails_${file.id}`) || 0);
+                const unlocked = localStorage.getItem(`unlocked_${file.id}`);
+                const interacted = localStorage.getItem(`interacted_${file.id}`);
 
-            div.onclick = () => {
-                if(file.restricted) {
-                    pendingUrl = file.url;
-                    document.getElementById('passcode-overlay').style.display = 'flex';
-                    document.getElementById('file-pass').focus();
-                } else {
-                    div.classList.add('opened');
-                    sessionStorage.setItem(`opened_${file.id}`, 'true');
-                    startLoading(file.name, file.url);
+                if (unlocked === 'true') {
+                    stateClass = 'folder-green';
+                } else if (lockoutExpiry && Date.now() < parseInt(lockoutExpiry)) {
+                    stateClass = 'folder-red';
+                } else if (fails > 0 || interacted === 'true') {
+                    stateClass = 'folder-grey';
+                } else if (lockoutExpiry && Date.now() >= parseInt(lockoutExpiry)) {
+                    // Timer expired offline, reset states
+                    localStorage.removeItem(`lockout_${file.id}`);
+                    localStorage.removeItem(`fails_${file.id}`);
+                    stateClass = 'folder-grey'; // Leaves it grey to show they tried before
                 }
-            };
-            grid.appendChild(div);
-        });
 
-        // Passcode logic for Restricted Files
+                div.classList.add(stateClass);
+                div.innerHTML = `<img src="folder.png" class="file-icon"><div class="file-name">${file.name}</div>`;
+                
+                div.onclick = () => handleFolderClick(file, stateClass);
+                grid.appendChild(div);
+            });
+        }
+
+        function handleFolderClick(file, currentState) {
+            currentFileId = file.id;
+
+            // If completely unlocked or unrestricted
+            if (currentState === 'folder-green' || (!file.restricted && currentState !== 'folder-red')) {
+                localStorage.setItem(`unlocked_${file.id}`, 'true');
+                renderGrid();
+                startLoading(file.name, file.url);
+                return;
+            }
+
+            // If file is currently locked down
+            if (currentState === 'folder-red') {
+                showLockoutScreen(file);
+                return;
+            }
+
+            // Mark as interacted (turns grey if it was navy)
+            if (currentState === 'folder-navy') {
+                localStorage.setItem(`interacted_${file.id}`, 'true');
+                renderGrid();
+            }
+
+            // Setup and show Passcode Screen
+            document.getElementById('passcode-overlay').style.display = 'flex';
+            const input = document.getElementById('file-pass');
+            input.value = "";
+            input.focus();
+            document.getElementById('error-msg').innerText = "";
+            
+            const fails = parseInt(localStorage.getItem(`fails_${file.id}`) || 0);
+            const hintBox = document.getElementById('hint-text');
+            
+            // Show hint if they failed twice (last chance)
+            if (fails === 2) {
+                hintBox.innerText = `SYSTEM HINT: ${file.hint}`;
+                hintBox.style.display = 'block';
+            } else {
+                hintBox.style.display = 'none';
+            }
+        }
+
+        // Passcode Submission Logic
         document.getElementById('file-pass').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                if (this.value.toLowerCase() === "sky") {
-                    document.getElementById('passcode-overlay').style.display = 'none';
-                    this.value = "";
-                    startLoading("RESTRICTED DATA", pendingUrl);
+                const guess = this.value.toLowerCase().trim();
+                const file = files.find(f => f.id === currentFileId);
+                let fails = parseInt(localStorage.getItem(`fails_${file.id}`) || 0);
+
+                if (guess === file.pass) {
+                    // Success
+                    localStorage.setItem(`unlocked_${file.id}`, 'true');
+                    localStorage.removeItem(`fails_${file.id}`);
+                    localStorage.removeItem(`lockout_${file.id}`);
+                    closeOverlays();
+                    renderGrid();
+                    startLoading(file.name, file.url);
                 } else {
-                    document.getElementById('pass-msg').innerText = "INVALID KEY";
-                    this.value = "";
+                    // Fail
+                    fails++;
+                    localStorage.setItem(`fails_${file.id}`, fails);
+                    
+                    if (fails >= 3) {
+                        // Trigger Lockout
+                        const expiry = Date.now() + LOCKDOWN_TIME;
+                        localStorage.setItem(`lockout_${file.id}`, expiry);
+                        closeOverlays();
+                        renderGrid();
+                        showLockoutScreen(file);
+                    } else {
+                        // Show error & check if hint needed
+                        document.getElementById('error-msg').innerText = `ACCESS DENIED - ATTEMPT ${fails}/3`;
+                        this.value = "";
+                        if (fails === 2) {
+                            document.getElementById('hint-text').innerText = `SYSTEM HINT: ${file.hint}`;
+                            document.getElementById('hint-text').style.display = 'block';
+                        }
+                    }
                 }
             }
         });
+
+        // Live Lockout Timer Logic
+        function showLockoutScreen(file) {
+            document.getElementById('lockout-overlay').style.display = 'flex';
+            const timerDisplay = document.getElementById('lockout-timer-display');
+            const expiry = parseInt(localStorage.getItem(`lockout_${file.id}`));
+
+            if (activeLockoutInterval) clearInterval(activeLockoutInterval);
+
+            activeLockoutInterval = setInterval(() => {
+                const timeLeft = expiry - Date.now();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(activeLockoutInterval);
+                    localStorage.removeItem(`lockout_${file.id}`);
+                    localStorage.removeItem(`fails_${file.id}`); // Reset puzzle
+                    closeOverlays();
+                    renderGrid(); // Red folder turns grey
+                } else {
+                    const m = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                    const s = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                    timerDisplay.innerText = (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
+                }
+            }, 1000);
+        }
+
+        function closeOverlays() {
+            document.querySelectorAll('.overlay').forEach(el => el.style.display = 'none');
+            if (activeLockoutInterval) clearInterval(activeLockoutInterval);
+            renderGrid(); // Re-render to ensure colors are updated
+        }
 
         function startLoading(name, url) {
             const screen = document.getElementById('loading-screen');
@@ -175,14 +316,17 @@
             screen.style.display = 'flex';
             let width = 0;
             let interval = setInterval(() => {
-                width += Math.random() * 25;
+                width += Math.random() * 20;
                 if (width >= 100) {
                     clearInterval(interval);
                     window.location.href = url;
                 }
                 fill.style.width = width + "%";
-            }, 120);
+            }, 100);
         }
+
+        // Boot
+        window.onload = renderGrid;
     </script>
 </body>
 </html>
