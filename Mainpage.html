@@ -111,12 +111,13 @@
             border: 1px dashed rgba(0, 255, 0, 0.2);
         }
 
-        .right-panel {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 25px;
-        }
+    .right-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 25px;
+    z-index: 10; /* Ensures it stays above the background */
+}
 
         .nav-btn {
             background: rgba(0, 255, 0, 0.02);
@@ -175,19 +176,21 @@
         <img src="NATRAILS-LOGO.png" alt="LOGO">
     </div>
 
-    <div id="home-page">
-       <div class="left-panel">
-    <div class="internal-box" id="puzzle-board">
-        </div>
-</div>
-        </div>
-        <div class="right-panel">
-            <a href="database.html" class="nav-btn">Files</a>
-            <a href="about.html" class="nav-btn">About</a>
-            <a href="ID.html" class="nav-btn">ID Card</a>
-        </div>
+<div id="home-page" style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; opacity: 1;">
+    
+    <div class="left-panel">
+        <div class="internal-box" id="puzzle-board">
+            </div>
     </div>
 
+    <div class="right-panel">
+        <a href="database.html" class="nav-btn">Files</a>
+        <a href="about.html" class="nav-btn">About</a>
+        <a href="ID.html" class="nav-btn">ID Card</a>
+    </div>
+
+</div>
+    
 <script>
     window.onload = () => {
         const warning = document.getElementById('warning-page');
