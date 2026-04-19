@@ -279,36 +279,38 @@
         };
 
         // --- LOGIN LOGIC ---
-        function attemptLogin() {
-           const input = passInput.value.toLowerCase().trim();
+      function attemptLogin() {
+    const input = passInput.value.toLowerCase().trim();
 
-if (input === "triangle" || input === "triangles") {
-    // Access Granted logic here
-}
-                messageDiv.style.color = "#00ff00";
-                messageDiv.innerText = "ACCESS GRANTED. REROUTING...";
-                setTimeout(() => {
-                    window.location.href = "Mainpage.html";
-                }, 1000);
-            } else {
-                fails++;
-                passInput.value = "";
-                messageDiv.style.color = "#ff3e3e";
-                messageDiv.innerText = `ACCESS DENIED (${fails}/3)`;
+    if (input === "triangle" || input === "triangles") {
+        // Success Logic
+        messageDiv.style.color = "#00ff00";
+        messageDiv.innerText = "ACCESS GRANTED. REROUTING...";
+        sessionStorage.setItem('warning_bypassed', 'true');
+        
+        setTimeout(() => {
+            window.location.href = "Mainpage.html";
+        }, 1000);
+    } else {
+        // Fail Logic
+        fails++;
+        passInput.value = "";
+        messageDiv.style.color = "#ff3e3e";
+        messageDiv.innerText = `ACCESS DENIED (${fails}/3)`;
 
-                // HINT ON 2ND FAILED ATTEMPT (gives them 1 last try)
-                if (fails === 2) {
-                    hintDiv.style.display = 'block';
-                }
-                
-                // LOCKOUT ON 3RD FAILED ATTEMPT
-                if (fails >= 3) {
-                    const lockoutEndTime = Date.now() + ONE_HOUR;
-                    localStorage.setItem('lockout_expiry', lockoutEndTime);
-                    triggerLockoutUI(lockoutEndTime);
-                }
-            }
+        // HINT ON 2ND FAILED ATTEMPT
+        if (fails === 2) {
+            hintDiv.style.display = 'block';
         }
+
+        // LOCKOUT ON 3RD FAILED ATTEMPT
+        if (fails >= 3) {
+            const lockoutEndTime = Date.now() + ONE_HOUR;
+            localStorage.setItem('lockout_expiry', lockoutEndTime);
+            triggerLockoutUI(lockoutEndTime);
+        }
+    }
+}
 
         // --- TIMER AND LOCKOUT LOGIC ---
         function triggerLockoutUI(expiryTime) {
