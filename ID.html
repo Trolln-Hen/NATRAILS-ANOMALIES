@@ -149,6 +149,29 @@
             color: #000;
             box-shadow: 0 0 15px #00ff00;
         }
+        #staff-name {
+    text-transform: uppercase;
+}
+
+.reboot-btn {
+    background: transparent;
+    border: 1px solid #ff2a2a;
+    color: #ff2a2a;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 10px;
+    padding: 8px 15px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: 0.3s;
+    opacity: 0.6;
+}
+
+.reboot-btn:hover {
+    opacity: 1;
+    background: #ff2a2a;
+    color: black;
+    box-shadow: 0 0 15px #ff2a2a;
+}
     </style>
 </head>
 <body>
@@ -164,23 +187,80 @@
             <div class="id-photo">
                 <p style="opacity: 0.3; font-size: 12px; text-align: center;">PHOTO.JPG<br>NOT FOUND</p>
             </div>
-
-            <div class="id-details">
-                <div class="detail-item">
-                    <span class="label">Name:</span>
-                    <span class="value glitch">J̶̰̖̱̹̉͆̏̔̅͋̿̈́͘͝o̷̧̙͖͉͊͌̈̃̔̇̈́̆͘͝ͅͅh̶͎̼̗̮͈̰̀̈́̓̈͐̌͋̋̋̚͘n̵̢͓̻͔͉̮̉̈̓̇̈́̋̿͗͘͘͝</span>
-                </div>
+<div class="info-row">
+        <span class="label">NAME:</span>
+        <span class="value" id="staff-name">LOADING...</span>
+    </div>
+    </div>
                 <div class="detail-item">
                     <span class="label">Role:</span>
                     <span class="value">Staff Worker</span>
                 </div>
                 <div class="detail-item">
                     <span class="label">Room:</span>
-                    <span class="value glitch">R̶̲̆́̉͋̏͒͌̀̅͠Ö̸̰̲̖͕̦͕̥̝̥́̏̽̈́͑̋͒́̚͜͝O̵̲̫͊̈̂̂̆͌̏̏̈̔͠M̴̺͓̀̈́̔̈̈̋̅̐̿̅̔ ̷͙̹̩̼̃̈͒͋̋͑͒̇́̅̉Á̶̡̻͖̩̩̯̼̻̰̼̈̄̎̔̈́̌͋͒͠͝-̶͎̫̫̫͔̩̝͔̣̿̓̍̈́̌̅̇̃͝͝3̵̬̟̹̙̍̄̈́̋̈́̈̍̌̊͘͜ͅ</span>
+                    <span class="value glitch">R̶̲̆́̉͋̏͒͌̀̅͠Ö̸̰̲̖͕̦͕̥̝̥́̏̽̈́͑̋͒́̚͜͝O̵̲̫͊̈̂̂̆͌̏̏̈̔͠M̴̺͓̀̈́̔̈̈̋̅̐̿̅̔ ̷͙̹̩̼̃̈͒͋̋͑͒̇́̅̉1</span>
                 </div>
             </div>
         </div>
     </div>
+    <div style="margin-top: 20px; text-align: center;">
+    <button onclick="triggerReboot()" class="reboot-btn">REBOOT SYSTEM?</button>
+</div>
+
+<style>
+    .reboot-btn {
+        background: transparent;
+        border: 1px solid #ff2a2a;
+        color: #ff2a2a;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 10px;
+        padding: 5px 10px;
+        cursor: pointer;
+        letter-spacing: 2px;
+        transition: 0.3s;
+        opacity: 0.5;
+    }
+    .reboot-btn:hover {
+        opacity: 1;
+        background: #ff2a2a;
+        color: black;
+        box-shadow: 0 0 10px #ff2a2a;
+    }
+</style>
+<script>
+    window.onload = () => {
+        const nameElement = document.getElementById('staff-name');
+        const names = ["Mill", "Sam", "Jesse", "Taylor", "Wren"];
+
+        // Check if a name was already assigned this session
+        let assignedName = sessionStorage.getItem('assigned_name');
+
+        if (!assignedName) {
+            // Randomly pick a name from the list
+            assignedName = names[Math.floor(Math.random() * names.length)];
+            sessionStorage.setItem('assigned_name', assignedName);
+        }
+
+        nameElement.innerText = assignedName;
+    };
+
+    function triggerReboot() {
+        let code = prompt("CRITICAL OVERRIDE: ENTER AUTHORIZATION CODE");
+
+        if (code && code.toLowerCase() === "avacado") {
+            alert("SYSTEM WIPE INITIALIZED. PURGING ALL FRAGMENTS...");
+            
+            // Clear everything!
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Send back to the start
+            window.location.href = "index.html";
+        } else if (code !== null) {
+            alert("ACCESS DENIED.");
+        }
+    }
+</script>
 
     <a href="Mainpage.html" class="back-btn">< RETURN_TO_SYSTEM</a>
 </div>
