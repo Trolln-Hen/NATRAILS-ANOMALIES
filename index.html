@@ -174,6 +174,12 @@
             0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 0.9; }
             20%, 24%, 55% { opacity: 0.3; }
         }
+        #mc-obfuscated {
+    font-family: 'Courier New', Courier, monospace; /* Prevents text "shaking" */
+    color: var(--neon);
+    text-shadow: 0 0 5px var(--neon);
+    font-weight: bold;
+}
     </style>
 </head>
 <body>
@@ -211,7 +217,7 @@
 
             <div id="lockout-facts">
                 <p><strong>[SYSTEM IDLE THOUGHTS]</strong></p>
-                <p>Natrails is a place located in <span class="glitch">S̵E̵C̵T̸O̵R̵ ̸N̷U̵L̷L̶</span></p>
+                <p>Natrails is a place located in <span id="mc-obfuscated" class="glitch">S̵E̵C̵T̸O̵R̵ ̸N̷U̵L̷L̶</span></p>
                 <p>Watch <strong>Trolln' Hen</strong> meanwhile.</p>
             </div>
         </div>
@@ -274,7 +280,11 @@
 
         // --- LOGIN LOGIC ---
         function attemptLogin() {
-            if (passInput.value.toLowerCase() === "triangle") {
+           const input = passInput.value.toLowerCase().trim();
+
+if (input === "triangle" || input === "triangles") {
+    // Access Granted logic here
+}
                 messageDiv.style.color = "#00ff00";
                 messageDiv.innerText = "ACCESS GRANTED. REROUTING...";
                 setTimeout(() => {
@@ -337,6 +347,22 @@
         passInput.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') { attemptLogin(); }
         });
+        const obfuscatedElement = document.getElementById('mc-obfuscated');
+const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+const originalText = obfuscatedElement.innerText;
+
+setInterval(() => {
+    let scrambled = '';
+    for (let i = 0; i < originalText.length; i++) {
+        // If it's a space, keep it a space; otherwise, pick a random char
+        if (originalText[i] === ' ') {
+            scrambled += ' ';
+        } else {
+            scrambled += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+    }
+    obfuscatedElement.innerText = scrambled;
+}, 50); // 50ms is perfect for that fast "scrambling" look
     </script>
 
 </body>
