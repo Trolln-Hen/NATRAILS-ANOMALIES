@@ -193,23 +193,22 @@
             <div class="id-photo">
                 <p style="opacity: 0.3; font-size: 12px; text-align: center;">PHOTO.JPG<br>NOT FOUND</p>
             </div>
-<div class="info-row">
-        <span class="label">NAME:</span>
-        <span class="value" id="staff-name">LOADING...</span>
+<div class="id-details">
+    <div class="detail-item">
+        <span class="label">Name:</span>
+        <span id="staff-name" class="value">LOADING...</span>
     </div>
+    <div class="detail-item">
+        <span class="label">Role:</span>
+        <span class="value">Staff Worker</span>
     </div>
-                <div class="detail-item">
-                    <span class="label">Role:</span>
-                    <span class="value">Staff Worker</span>
-                </div>
-                <div class="detail-item">
-    <span class="label">Room:</span>
-    <span class="value">R00M-<span class="glitch" id="room-obfuscated">67</span></span>
+    <div class="detail-item">
+        <span class="label">Room:</span>
+        <span class="value">ROOM-<span id="room-obfuscated" class="glitch">67</span></span>
+    </div>
 </div>
-            </div>
-        </div>
-    </div>
-    <div style="margin-top: 20px; text-align: center;">
+
+<div style="margin-top: 25px; text-align: center;">
     <button onclick="triggerReboot()" class="reboot-btn">REBOOT SYSTEM?</button>
 </div>
 
@@ -234,45 +233,42 @@
     }
 </style>
 <script>
+    // 1. ALL LOADING LOGIC (Name & Glitch Initialization)
     window.onload = () => {
         const nameElement = document.getElementById('staff-name');
         const names = ["Mill", "Sam", "Jesse", "Taylor", "Wren"];
 
-        // Check if a name was already assigned this session
+        // Handle Random Name
         let assignedName = sessionStorage.getItem('assigned_name');
-
         if (!assignedName) {
-            // Randomly pick a name from the list
             assignedName = names[Math.floor(Math.random() * names.length)];
             sessionStorage.setItem('assigned_name', assignedName);
         }
+        if(nameElement) nameElement.innerText = assignedName;
 
-        nameElement.innerText = assignedName;
+        // Start the Room Glitch
+        createMcGlitch('room-obfuscated');
     };
 
+    // 2. THE REBOOT FUNCTION
     function triggerReboot() {
         let code = prompt("CRITICAL OVERRIDE: ENTER AUTHORIZATION CODE");
-
         if (code && code.toLowerCase() === "avacado") {
             alert("SYSTEM WIPE INITIALIZED. PURGING ALL FRAGMENTS...");
-            
-            // Clear everything!
             localStorage.clear();
             sessionStorage.clear();
-            
-            // Send back to the start
             window.location.href = "index.html";
         } else if (code !== null) {
             alert("ACCESS DENIED.");
         }
     }
-    <script>
+
+    // 3. THE GLITCH ENGINE
     function createMcGlitch(elementId) {
         const el = document.getElementById(elementId);
         if (!el) return;
-
-        // Numbers only for a room feel, or keep symbols for a true MC glitch
-        const chars = '0123456789!@#$%'; 
+        
+        const chars = '0123456789!@#$%';
         const originalLength = el.innerText.length;
 
         setInterval(() => {
@@ -283,12 +279,8 @@
             el.innerText = scrambled;
         }, 50);
     }
-
-    // Initialize
-    createMcGlitch('room-obfuscated');
 </script>
-  </script>
-
+    
     <a href="Mainpage.html" class="back-btn">< RETURN_TO_SYSTEM</a>
 </div>
 
