@@ -172,6 +172,12 @@
     color: black;
     box-shadow: 0 0 15px #ff2a2a;
 }
+        #mc-obfuscated {
+    font-family: 'Courier New', Courier, monospace; /* Prevents text "shaking" */
+    color: var(--neon);
+    text-shadow: 0 0 5px var(--neon);
+    font-weight: bold;
+}
     </style>
 </head>
 <body>
@@ -197,9 +203,9 @@
                     <span class="value">Staff Worker</span>
                 </div>
                 <div class="detail-item">
-                    <span class="label">Room:</span>
-                    <span class="value glitch">R̶̲̆́̉͋̏͒͌̀̅͠Ö̸̰̲̖͕̦͕̥̝̥́̏̽̈́͑̋͒́̚͜͝O̵̲̫͊̈̂̂̆͌̏̏̈̔͠M̴̺͓̀̈́̔̈̈̋̅̐̿̅̔ ̷͙̹̩̼̃̈͒͋̋͑͒̇́̅̉1</span>
-                </div>
+    <span class="label">Room:</span>
+    <span class="value">R00M-<span class="glitch" id="room-obfuscated">67</span></span>
+</div>
             </div>
         </div>
     </div>
@@ -260,7 +266,28 @@
             alert("ACCESS DENIED.");
         }
     }
+    <script>
+    function createMcGlitch(elementId) {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+
+        // Numbers only for a room feel, or keep symbols for a true MC glitch
+        const chars = '0123456789!@#$%'; 
+        const originalLength = el.innerText.length;
+
+        setInterval(() => {
+            let scrambled = '';
+            for (let i = 0; i < originalLength; i++) {
+                scrambled += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            el.innerText = scrambled;
+        }, 50);
+    }
+
+    // Initialize
+    createMcGlitch('room-obfuscated');
 </script>
+  </script>
 
     <a href="Mainpage.html" class="back-btn">< RETURN_TO_SYSTEM</a>
 </div>
