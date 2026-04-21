@@ -10,21 +10,21 @@
             color: #00ff00;
             font-family: 'Courier New', Courier, monospace;
             margin: 0;
-            padding: 40px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            flex-direction: column;
         }
 
-        /* --- THE ID CARD --- */
+        /* --- THE ID CARD (Expanded) --- */
         .id-card {
-            width: 500px;
-            height: 300px;
+            width: 600px;
+            height: 350px;
             background: rgba(0, 255, 0, 0.03);
             border: 2px solid rgba(0, 255, 0, 0.2);
-            border-radius: 10px;
-            box-shadow: inset 0 0 30px rgba(0, 255, 0, 0.05), 0 0 15px rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            box-shadow: inset 0 0 30px rgba(0, 255, 0, 0.05), 0 0 30px rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(5px);
             position: relative;
             overflow: hidden;
@@ -32,49 +32,146 @@
             flex-direction: column;
         }
 
-        /* Subtle scanline effect across the whole card */
-        .id-card::after {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(0deg, rgba(0,255,0,0.01) 50%, rgba(0,0,0,0) 50%);
-            background-size: 100% 4px;
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        /* --- TOP SECTION --- */
         .id-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 20px;
+            padding: 15px 25px;
             background: rgba(0, 255, 0, 0.05);
             border-bottom: 1px solid rgba(0, 255, 0, 0.2);
         }
 
-        .header-logo {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            opacity: 0.7;
-        }
-
-        .header-title {
-            font-weight: bold;
-            font-size: 16px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        /* --- MIDDLE SECTION --- */
         .id-body {
-            flex: 1;
             display: flex;
-            padding: 20px;
+            padding: 30px;
+            gap: 30px;
+            flex: 1;
+        }
+
+        .id-photo {
+            width: 160px;
+            height: 200px;
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .id-details {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .label { color: rgba(0, 255, 0, 0.5); font-size: 12px; text-transform: uppercase; margin-right: 10px; }
+        .value { font-size: 18px; font-weight: bold; letter-spacing: 1px; }
+
+        /* --- BUTTONS BELOW CARD --- */
+        .controls-container {
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             gap: 20px;
         }
 
+        .reboot-btn {
+            background: transparent;
+            border: 1px solid #ff2a2a;
+            color: #ff2a2a;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .reboot-btn:hover {
+            background: #ff2a2a;
+            color: black;
+            box-shadow: 0 0 20px #ff2a2a;
+        }
+
+        .back-btn {
+            color: #00ff00;
+            text-decoration: none;
+            font-size: 12px;
+            opacity: 0.6;
+        }
+
+        #room-obfuscated {
+            text-shadow: 0 0 8px #00ff00;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="id-card">
+        <div class="id-header">
+            <div style="font-size: 10px; opacity: 0.7;">LOGO.PNG // ACCESS: ADMIN</div>
+            <div style="font-weight: bold; letter-spacing: 2px;">NATRAILS ANOMALIES</div>
+        </div>
+        
+        <div class="id-body">
+            <div class="id-photo">
+                <span style="opacity: 0.3; font-size: 10px;">NO SIGNAL</span>
+            </div>
+            
+            <div class="id-details">
+                <div><span class="label">Name:</span><span id="staff-name" class="value">LOADING...</span></div>
+                <div><span class="label">Role:</span><span class="value">Staff Worker</span></div>
+                <div><span class="label">Room:</span><span class="value">ROOM-<span id="room-obfuscated">67</span></span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls-container">
+        <button onclick="triggerReboot()" class="reboot-btn">REBOOT SYSTEM?</button>
+        <a href="Mainpage.html" class="back-btn">< RETURN TO SYSTEM</a>
+    </div>
+
+    <script>
+        window.onload = () => {
+            // 1. Random Name Logic
+            const nameElement = document.getElementById('staff-name');
+            const names = ["Mill", "Sam", "Jesse", "Taylor", "Wren"];
+            let assignedName = sessionStorage.getItem('assigned_name');
+            if (!assignedName) {
+                assignedName = names[Math.floor(Math.random() * names.length)];
+                sessionStorage.setItem('assigned_name', assignedName);
+            }
+            nameElement.innerText = assignedName;
+
+            // 2. Room Glitch Logic
+            const roomEl = document.getElementById('room-obfuscated');
+            const chars = '0123456789!@#$%';
+            setInterval(() => {
+                let scrambled = '';
+                for (let i = 0; i < 2; i++) {
+                    scrambled += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                roomEl.innerText = scrambled;
+            }, 50);
+        };
+
+        // 3. Reboot Function
+        function triggerReboot() {
+            let code = prompt("CRITICAL OVERRIDE: ENTER AUTHORIZATION CODE");
+            if (code && code.toLowerCase() === "avacado") {
+                alert("SYSTEM WIPE INITIALIZED. PURGING DATA...");
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.href = "index.html";
+            } else if (code !== null) {
+                alert("ACCESS DENIED.");
+            }
+        }
+    </script>
+</body>
+</html>
         /* LEFT PHOTO AREA */
         .id-photo {
             width: 140px;
