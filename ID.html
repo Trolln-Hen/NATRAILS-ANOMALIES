@@ -5,139 +5,153 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NATRAILS | STAFF ID</title>
     <style>
+        :root { --neon: #00ff00; }
         body {
             background-color: #050505;
-            color: #00ff00;
+            color: var(--neon);
             font-family: 'Courier New', Courier, monospace;
-            margin: 0;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
             flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
         }
 
-        /* --- THE ID CARD (Expanded) --- */
+        /* --- BIGGER ID CARD --- */
         .id-card {
-            width: 600px;
-            height: 350px;
-            background: rgba(0, 255, 0, 0.03);
+            width: 550px; /* Wider to stop congestion */
+            height: 320px;
+            background: rgba(0, 255, 0, 0.02);
             border: 2px solid rgba(0, 255, 0, 0.2);
-            border-radius: 15px;
-            box-shadow: inset 0 0 30px rgba(0, 255, 0, 0.05), 0 0 30px rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
+            border-radius: 10px;
             position: relative;
-            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,255,0,0.05);
             display: flex;
             flex-direction: column;
         }
 
         .id-header {
+            padding: 10px 20px;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 15px 25px;
-            background: rgba(0, 255, 0, 0.05);
-            border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+            font-size: 10px;
+            letter-spacing: 1px;
         }
 
-        .id-body {
+        .id-content {
             display: flex;
-            padding: 30px;
-            gap: 30px;
+            padding: 25px;
+            gap: 25px;
             flex: 1;
         }
 
         .id-photo {
-            width: 160px;
-            height: 200px;
+            width: 150px;
+            height: 180px;
             border: 1px solid rgba(0, 255, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: rgba(0, 0, 0, 0.3);
+            font-size: 9px;
+            color: rgba(0, 255, 0, 0.3);
         }
 
         .id-details {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 20px;
             justify-content: center;
+            gap: 18px;
         }
 
-        .label { color: rgba(0, 255, 0, 0.5); font-size: 12px; text-transform: uppercase; margin-right: 10px; }
-        .value { font-size: 18px; font-weight: bold; letter-spacing: 1px; }
+        .detail-item { display: flex; align-items: baseline; }
+        .label { width: 70px; font-size: 11px; opacity: 0.6; }
+        .value { font-size: 18px; font-weight: bold; text-transform: uppercase; }
 
-        /* --- BUTTONS BELOW CARD --- */
-        .controls-container {
-            margin-top: 40px;
+        /* --- BUTTONS OUTSIDE CARD --- */
+        .external-controls {
+            margin-top: 30px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            gap: 15px;
         }
 
         .reboot-btn {
             background: transparent;
             border: 1px solid #ff2a2a;
             color: #ff2a2a;
+            font-family: inherit;
             padding: 10px 20px;
             cursor: pointer;
-            font-family: inherit;
-            transition: 0.3s;
-            text-transform: uppercase;
             letter-spacing: 2px;
+            transition: 0.3s;
         }
-
         .reboot-btn:hover {
             background: #ff2a2a;
             color: black;
-            box-shadow: 0 0 20px #ff2a2a;
+            box-shadow: 0 0 15px #ff2a2a;
         }
 
         .back-btn {
-            color: #00ff00;
+            color: var(--neon);
             text-decoration: none;
             font-size: 12px;
-            opacity: 0.6;
+            opacity: 0.5;
+            transition: 0.3s;
         }
+        .back-btn:hover { opacity: 1; text-decoration: underline; }
 
-        #room-obfuscated {
-            text-shadow: 0 0 8px #00ff00;
-        }
+        #room-obfuscated { text-shadow: 0 0 5px var(--neon); }
     </style>
 </head>
 <body>
 
     <div class="id-card">
         <div class="id-header">
-            <div style="font-size: 10px; opacity: 0.7;">LOGO.PNG // ACCESS: ADMIN</div>
-            <div style="font-weight: bold; letter-spacing: 2px;">NATRAILS ANOMALIES</div>
+            <span>LOGO.PNG // ACCESS: ADMIN</span>
+            <span>NATRAILS ANOMALIES</span>
         </div>
         
-        <div class="id-body">
+        <div class="id-content">
             <div class="id-photo">
-                <span style="opacity: 0.3; font-size: 10px;">NO SIGNAL</span>
+                <div style="margin-bottom: 10px;">PHOTO.JPG</div>
+                <div>NOT FOUND</div>
             </div>
             
             <div class="id-details">
-                <div><span class="label">Name:</span><span id="staff-name" class="value">LOADING...</span></div>
-                <div><span class="label">Role:</span><span class="value">Staff Worker</span></div>
-                <div><span class="label">Room:</span><span class="value">ROOM-<span id="room-obfuscated">67</span></span></div>
+                <div class="detail-item">
+                    <span class="label">NAME:</span>
+                    <span class="value" id="staff-name">LOADING...</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">ROLE:</span>
+                    <span class="value">Staff Worker</span>
+                </div>
+                <div class="detail-item">
+                    <span class="label">ROOM:</span>
+                    <span class="value">ROOM-<span id="room-obfuscated">67</span></span>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="controls-container">
+    <div class="external-controls">
         <button onclick="triggerReboot()" class="reboot-btn">REBOOT SYSTEM?</button>
-        <a href="Mainpage.html" class="back-btn">< RETURN TO SYSTEM</a>
+        <a href="Mainpage.html" class="back-btn">< RETURN_TO_SYSTEM</a>
     </div>
 
     <script>
+        // 1. Initialize Names and Glitch
         window.onload = () => {
-            // 1. Random Name Logic
             const nameElement = document.getElementById('staff-name');
             const names = ["Mill", "Sam", "Jesse", "Taylor", "Wren"];
+
             let assignedName = sessionStorage.getItem('assigned_name');
             if (!assignedName) {
                 assignedName = names[Math.floor(Math.random() * names.length)];
@@ -145,7 +159,7 @@
             }
             nameElement.innerText = assignedName;
 
-            // 2. Room Glitch Logic
+            // Start room obfuscation
             const roomEl = document.getElementById('room-obfuscated');
             const chars = '0123456789!@#$%';
             setInterval(() => {
@@ -157,7 +171,7 @@
             }, 50);
         };
 
-        // 3. Reboot Function
+        // 2. Reboot Logic
         function triggerReboot() {
             let code = prompt("CRITICAL OVERRIDE: ENTER AUTHORIZATION CODE");
             if (code && code.toLowerCase() === "avacado") {
@@ -170,196 +184,5 @@
             }
         }
     </script>
-</body>
-</html>
-        /* LEFT PHOTO AREA */
-        .id-photo {
-            width: 140px;
-            height: 180px;
-            border: 2px solid rgba(0, 255, 0, 0.2);
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-
-        .id-photo::before {
-            content: "SCANNING...";
-            font-size: 10px;
-            opacity: 0.5;
-            position: absolute;
-            top: 10px;
-            left: 10px;
-        }
-
-        /* RIGHT DETAILS AREA */
-        .id-details {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .detail-item {
-            display: flex;
-            font-size: 14px;
-        }
-
-        .label {
-            width: 80px;
-            text-transform: uppercase;
-            opacity: 0.7;
-        }
-
-        .value {
-            flex: 1;
-            font-weight: bold;
-        }
-
-        /* --- GLITCH EFFECT FOR TEXT --- */
-        .glitch {
-            opacity: 0.9;
-            animation: flicker 1s infinite;
-        }
-
-        @keyframes flicker {
-            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 0.9; }
-            20%, 24%, 55% { opacity: 0.3; }
-        }
-
-        /* --- BACK BUTTON --- */
-        .back-btn {
-            display: block;
-            margin-top: 40px;
-            padding: 10px 20px;
-            color: #00ff00;
-            border: 1px solid #00ff00;
-            text-decoration: none;
-            transition: all 0.3s;
-            text-align: center;
-        }
-
-        .back-btn:hover {
-            background: #00ff00;
-            color: #000;
-            box-shadow: 0 0 15px #00ff00;
-        }
-        #staff-name {
-    text-transform: uppercase;
-}
-
-.reboot-btn {
-    background: transparent;
-    border: 1px solid #ff2a2a;
-    color: #ff2a2a;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 10px;
-    padding: 8px 15px;
-    cursor: pointer;
-    letter-spacing: 2px;
-    transition: 0.3s;
-    opacity: 0.6;
-}
-
-.reboot-btn:hover {
-    opacity: 1;
-    background: #ff2a2a;
-    color: black;
-    box-shadow: 0 0 15px #ff2a2a;
-}
-        #mc-obfuscated {
-    font-family: 'Courier New', Courier, monospace; /* Prevents text "shaking" */
-    color: var(--neon);
-    text-shadow: 0 0 5px var(--neon);
-    font-weight: bold;
-}
-    </style>
-</head>
-<body>
-
-<div>
-    <div class="id-card">
-        <div class="id-header">
-            <div class="header-logo">LOGO.PNG // ACCESS: ADMIN</div>
-            <div class="header-title">NATRAILS ANOMALIES</div>
-        </div>
-
-        <div class="id-body">
-            <div class="id-photo">
-                <p style="opacity: 0.3; font-size: 12px; text-align: center;">PHOTO.JPG<br>NOT FOUND</p>
-            </div>
-<div class="id-details">
-    <div class="detail-item">
-        <span class="label">Name:</span>
-        <span id="staff-name" class="value">LOADING...</span>
-    </div>
-    <div class="detail-item">
-        <span class="label">Role:</span>
-        <span class="value">Staff Worker</span>
-    </div>
-    <div class="detail-item">
-        <span class="label">Room:</span>
-        <span class="value">ROOM-<span id="room-obfuscated" class="glitch">67</span></span>
-    </div>
-</div>
-
-<div style="margin-top: 25px; text-align: center;">
-    <button onclick="triggerReboot()" class="reboot-btn">REBOOT SYSTEM?</button>
-</div>
-
-<script>
-    // 1. ALL LOADING LOGIC (Name & Glitch Initialization)
-    window.onload = () => {
-        const nameElement = document.getElementById('staff-name');
-        const names = ["Mill", "Sam", "Jesse", "Taylor", "Wren"];
-
-        // Handle Random Name
-        let assignedName = sessionStorage.getItem('assigned_name');
-        if (!assignedName) {
-            assignedName = names[Math.floor(Math.random() * names.length)];
-            sessionStorage.setItem('assigned_name', assignedName);
-        }
-        if(nameElement) nameElement.innerText = assignedName;
-
-        // Start the Room Glitch
-        createMcGlitch('room-obfuscated');
-    };
-
-    // 2. THE REBOOT FUNCTION
-    function triggerReboot() {
-        let code = prompt("CRITICAL OVERRIDE: ENTER AUTHORIZATION CODE");
-        if (code && code.toLowerCase() === "avacado") {
-            alert("SYSTEM WIPE INITIALIZED. PURGING ALL FRAGMENTS...");
-            localStorage.clear();
-            sessionStorage.clear();
-            window.location.href = "index.html";
-        } else if (code !== null) {
-            alert("ACCESS DENIED.");
-        }
-    }
-
-    // 3. THE GLITCH ENGINE
-    function createMcGlitch(elementId) {
-        const el = document.getElementById(elementId);
-        if (!el) return;
-        
-        const chars = '0123456789!@#$%';
-        const originalLength = el.innerText.length;
-
-        setInterval(() => {
-            let scrambled = '';
-            for (let i = 0; i < originalLength; i++) {
-                scrambled += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            el.innerText = scrambled;
-        }, 50);
-    }
-</script>
-    
-    <a href="Mainpage.html" class="back-btn">< RETURN_TO_SYSTEM</a>
-</div>
-
 </body>
 </html>
